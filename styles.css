@@ -45,6 +45,11 @@ nav a:hover {
     color: #000;
 }
 
+nav a.active {
+    color: #000;
+    font-weight: bold;
+}
+
 main {
     margin-left: 250px;
     padding: 3rem;
@@ -55,28 +60,35 @@ section {
     margin-bottom: 4rem;
 }
 
-h2 {
-    margin-bottom: 1rem;
-    font-weight: normal;
+.heading-group {
+    display: inline-block;
+    margin-bottom: 1.5rem;
 }
 
-nav a.active {
-    color: #000;
-    font-weight: bold;
+.heading-group h2 {
+    font-weight: normal;
+    margin-bottom: 0.3rem;
 }
+
+.heading-group .divider {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 .page {
     display: none;
 }
 
 .page.active {
     display: block;
-    animation: slideIn 0.5s ease-in-out;
+    animation: slideIn 0.3s ease-out;
 }
 
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateX(40px);
+        transform: translateX(30px);
     }
     to {
         opacity: 1;
