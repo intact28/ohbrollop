@@ -70,7 +70,7 @@ nav a.active {
 
 .page.active {
     display: block;
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.5s ease-out;
 }
 
 @keyframes slideIn {
