@@ -70,13 +70,13 @@ nav a.active {
 
 .page.active {
     display: block;
-    animation: slideIn 0.5s ease-out;
+    animation: slideIn 0.5s ease-in-out;
 }
 
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateX(40px);
     }
     to {
         opacity: 1;
