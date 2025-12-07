@@ -64,6 +64,13 @@ nav a.active {
     color: #000;
     font-weight: bold;
 }
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
 
 /* Mobile: stack nav on top */
 @media (max-width: 768px) {
@@ -92,13 +99,5 @@ nav a.active {
     main {
         margin-left: 0;
         padding: 2rem;
-    }
-
-    .page {
-    display: none;
-    }
-
-    .page.active {
-    display: block;
     }
 }
