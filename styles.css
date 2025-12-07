@@ -93,4 +93,12 @@ nav a.active {
         margin-left: 0;
         padding: 2rem;
     }
+
+    .page {
+    display: none;
+    }
+
+    .page.active {
+    display: block;
+    }
 }
