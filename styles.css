@@ -60,6 +60,11 @@ h2 {
     font-weight: normal;
 }
 
+nav a.active {
+    color: #000;
+    font-weight: bold;
+}
+
 /* Mobile: stack nav on top */
 @media (max-width: 768px) {
     body {
