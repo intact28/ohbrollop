@@ -131,8 +131,8 @@ section {
 }
 
 .portrait {
-    width: 200px;
-    height: 200px;
+    width: 280px;
+    height: 280px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 2rem;
@@ -146,8 +146,8 @@ section {
     }
 
     .portrait {
-        width: 150px;
-        height: 150px;
+        width: 220px;
+        height: 220px;
     }
 
     nav {
