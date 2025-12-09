@@ -99,6 +99,43 @@ section {
     }
 }
 
+.countdown {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.countdown-item span {
+    font-size: 2.5rem;
+    color: #B8860B;
+}
+
+.countdown-item label {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .countdown {
+        gap: 1rem;
+    }
+    
+    .countdown-item span {
+        font-size: 1.8rem;
+    }
+    
+    .countdown-item label {
+        font-size: 0.75rem;
+    }
+}
+
 /* Mobile: stack nav on top */
 @media (max-width: 768px) {
     body {
