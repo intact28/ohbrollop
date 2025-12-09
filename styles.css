@@ -130,24 +130,24 @@ section {
     margin-top: 0.25rem;
 }
 
-@media (max-width: 768px) {
-    .countdown {
-        gap: 1rem;
-    }
-    
-    .countdown-item span {
-        font-size: 1.8rem;
-    }
-    
-    .countdown-item label {
-        font-size: 0.75rem;
-    }
+.portrait {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 2rem;
+    border: 4px solid #B8860B;
 }
 
 /* Mobile: stack nav on top */
 @media (max-width: 768px) {
     body {
         flex-direction: column;
+    }
+
+    .portrait {
+        width: 150px;
+        height: 150px;
     }
 
     nav {
@@ -172,5 +172,17 @@ section {
         margin-left: 0;
         padding: 2rem;
         justify-content: flex-start;
+    }
+
+    .countdown {
+        gap: 1rem;
+    }
+    
+    .countdown-item span {
+        font-size: 1.8rem;
+    }
+    
+    .countdown-item label {
+        font-size: 0.75rem;
     }
 }
