@@ -21,6 +21,14 @@ document.querySelectorAll('nav a').forEach(link => {
     });
 });
 
+// Accordion functionality
+document.querySelectorAll('.accordion-header').forEach(button => {
+    button.addEventListener('click', () => {
+        const item = button.parentElement;
+        item.classList.toggle('open');
+    });
+});
+
 // Countdown timer
 const weddingDate = new Date('2026-07-25T15:00:00');
 
