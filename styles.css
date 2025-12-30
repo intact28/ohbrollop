@@ -188,8 +188,8 @@ section {
 
 .journey-label {
     margin-top: 0.75rem;
-    font-style: italic;
-    color: #555;
+    font-family: 'Brush Script MT', 'Segoe Script', cursive;
+    color: #B8860B;
 }
 
 /* Mobile: stack nav on top */
@@ -260,7 +260,7 @@ section {
     }
     
     .journey-label {
-        font-size: 0.85rem;
+        font-size: 1.1rem;
         margin-top: 0.5rem;
     }
 }
