@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anmälan | Hanna & Oskar</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <h1>Hanna & Oskars Bröllop</h1>
+        <ul>
+            <li><a href="index.html">Hem</a></li>
+            <li><a href="details.html">När, Var, Hur</a></li>
+            <li><a href="location.html">Platsen</a></li>
+            <li><a href="accomodation.html">Boendet</a></li>
+            <li><a href="rsvp.html" class="active">Anmälan</a></li>
+            <li><a href="schedule.html">Schemat</a></li>
+            <li><a href="travel.html">Resan</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <img src="images/hanna_oskar.jpg" alt="Hanna och Oskar" class="portrait">
+        <section id="rsvp" class="page active">
+            <div class="heading-group">
+                <h2>O.S.A</h2>
+                <img src="images/divider.svg" alt="" class="divider">
+            </div>
+            
+            <form id="rsvp-form" class="rsvp-form">
+                <fieldset class="radio-group">
+                    <legend>Jag kommer</legend>
+                    <label class="radio-label">
+                        <input type="radio" name="attending" value="yes" required>
+                        <span>Ja</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="attending" value="no" required>
+                        <span>Nej</span>
+                    </label>
+                </fieldset>
+
+                <div id="attending-fields" class="conditional-fields hidden">
+                    <div class="form-group">
+                        <label for="guest-count">Antal gäster</label>
+                        <select id="guest-count" name="guest-count">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guest-names">
+                            Namn på gäster <span class="required">*</span>
+                        </label>
+                        <textarea 
+                            id="guest-names" 
+                            name="guest-names" 
+                            rows="3" 
+                            placeholder="Ange namn på alla i sällskapet"
+                        ></textarea>
+                        <span class="field-error hidden">Vänligen ange namn på alla gästerna</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dietary">Matallergier / specialkost</label>
+                        <textarea id="dietary" name="dietary" rows="2" placeholder="Ange eventuella allergier eller önskemål"></textarea>
+                    </div>
+
+                    <fieldset class="radio-group pizza-group">
+                        <legend>Vi vill vara med på pizzabuffé den 24/7 <span class="required">*</span></legend>
+                        <label class="radio-label">
+                            <input type="radio" name="pizza" value="yes" id="pizza-yes">
+                            <span>Ja</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="pizza" value="no" id="pizza-no">
+                            <span>Nej</span>
+                        </label>
+                        <span class="field-error hidden">Vänligen välj ett alternativ</span>
+                    </fieldset>
+
+                    <div id="pizza-fields" class="conditional-fields hidden">
+                        <div class="form-group">
+                            <label for="pizza-count">Antal som kommer på pizzabuffén</label>
+                            <select id="pizza-count" name="pizza-count">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="submit-btn">Skicka</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

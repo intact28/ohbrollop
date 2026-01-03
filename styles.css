@@ -272,6 +272,188 @@ section {
     padding: 0.75rem 1rem;
 }
 
+/* RSVP Form */
+.rsvp-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.rsvp-form fieldset {
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.rsvp-form legend {
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    color: #333;
+}
+
+.radio-group {
+    text-align: center;
+}
+
+.radio-group .radio-label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 1rem;
+    cursor: pointer;
+}
+
+.radio-label input,
+.checkbox-label input {
+    margin-right: 0.5rem;
+    accent-color: #B8860B;
+}
+
+.radio-label span,
+.checkbox-label span {
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: normal;
+}
+
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0d8cf;
+    border-radius: 4px;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    background-color: #fff;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #B8860B;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.checkbox-group {
+    margin-top: 1.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    margin-top: 0.25rem;
+}
+
+.conditional-fields {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.conditional-fields.hidden {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.conditional-fields:not(.hidden) {
+    max-height: 500px;
+    opacity: 1;
+}
+
+#pizza-fields:not(.hidden) {
+    max-height: 100px;
+}
+
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: #B8860B;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #9a7209;
+}
+
+/* Required field indicator */
+.required {
+    color: #c53030;
+}
+
+/* Field error message */
+.field-error {
+    display: block;
+    color: #c53030;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.field-error.hidden {
+    display: none;
+}
+
+/* Invalid field styling */
+.form-group textarea.invalid,
+.form-group select.invalid {
+    border-color: #c53030;
+}
+
+/* Pizza radio group */
+.pizza-group {
+    text-align: left;
+    margin-top: 1.5rem;
+}
+
+.pizza-group legend {
+    margin-bottom: 0.75rem;
+}
+
+.pizza-group .radio-label {
+    margin: 0 1rem 0 0;
+}
+
+.pizza-group .field-error {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.pizza-group .field-error.hidden {
+    display: none;
+}
+
+/* Disabled submit button */
+.submit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.submit-btn:disabled:hover {
+    background-color: #ccc;
+}
+
 /* Mobile: stack nav on top */
 @media (max-width: 768px) {
     body {
