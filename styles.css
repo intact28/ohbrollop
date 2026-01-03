@@ -31,7 +31,7 @@ nav {
     width: 250px;
     height: 100vh;
     padding: 2rem;
-    background-color: var(--dark-brown);
+    background-color: var(--tan);
     border-right: 1px solid var(--medium-brown);
 }
 
@@ -39,12 +39,12 @@ nav h1 {
     font-size: 1.4rem;
     margin-bottom: 2rem;
     font-weight: normal;
-    color: var(--cream);
+    color: var(--dark-brown);
 }
 
 nav a {
     text-decoration: none;
-    color: var(--tan);
+    color: var(--dark-brown);
     transition: color 0.2s ease;
 }
 
