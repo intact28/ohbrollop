@@ -42,46 +42,97 @@ if (daysEl) {
 const rsvpForm = document.getElementById('rsvp-form');
 
 if (rsvpForm) {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
     const attendingRadios = document.querySelectorAll('input[name="attending"]');
+    const attendingGroup = document.getElementById('attending-group');
     const attendingFields = document.getElementById('attending-fields');
     const pizzaRadios = document.querySelectorAll('input[name="pizza"]');
     const pizzaYes = document.getElementById('pizza-yes');
     const pizzaNo = document.getElementById('pizza-no');
+    const pizzaGroup = document.getElementById('pizza-group');
     const pizzaFields = document.getElementById('pizza-fields');
     const guestNames = document.getElementById('guest-names');
     const submitBtn = document.getElementById('submit-btn');
     
-    let isAttending = false;
+    let isAttending = null;
+
+    // Validation helpers
+    function isValidName(name) {
+        return name.trim().length >= 2;
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isValidPhone(phone) {
+        const digits = phone.replace(/\D/g, '');
+        return digits.length >= 8;
+    }
+
+    // Update field validation UI
+    function setFieldInvalid(input, isInvalid) {
+        const formGroup = input.closest('.form-group');
+        if (formGroup) {
+            if (isInvalid) {
+                formGroup.classList.add('invalid');
+            } else {
+                formGroup.classList.remove('invalid');
+            }
+        }
+    }
+
+    // Update radio group validation UI
+    function setRadioGroupInvalid(group, isInvalid) {
+        if (group) {
+            if (isInvalid) {
+                group.classList.add('invalid');
+            } else {
+                group.classList.remove('invalid');
+            }
+        }
+    }
 
     // Validate form and update submit button state
     function validateForm() {
-        if (!isAttending) {
-            submitBtn.disabled = false;
-            return true;
+        const nameValid = isValidName(nameInput.value);
+        const emailValid = isValidEmail(emailInput.value);
+        const phoneValid = isValidPhone(phoneInput.value);
+        const attendingSelected = isAttending !== null;
+
+        // Always show validation state
+        setFieldInvalid(nameInput, !nameValid);
+        setFieldInvalid(emailInput, !emailValid);
+        setFieldInvalid(phoneInput, !phoneValid);
+        setRadioGroupInvalid(attendingGroup, !attendingSelected);
+
+        // If attending not selected yet, disable submit
+        if (isAttending === null) {
+            submitBtn.disabled = true;
+            return false;
         }
 
+        // If not attending, only need name, email and phone
+        if (!isAttending) {
+            // Hide errors for attending-specific fields when not attending
+            setFieldInvalid(guestNames, false);
+            setRadioGroupInvalid(pizzaGroup, false);
+            
+            const isValid = nameValid && emailValid && phoneValid;
+            submitBtn.disabled = !isValid;
+            return isValid;
+        }
+
+        // If attending, validate additional fields
         const namesValid = guestNames.value.trim().length > 0;
         const pizzaSelected = pizzaYes.checked || pizzaNo.checked;
 
-        // Update UI for names field
-        const namesError = guestNames.parentElement.querySelector('.field-error');
-        if (namesValid) {
-            guestNames.classList.remove('invalid');
-            namesError.classList.add('hidden');
-        } else {
-            guestNames.classList.add('invalid');
-            namesError.classList.remove('hidden');
-        }
+        setFieldInvalid(guestNames, !namesValid);
+        setRadioGroupInvalid(pizzaGroup, !pizzaSelected);
 
-        // Update UI for pizza field
-        const pizzaError = document.querySelector('.pizza-group .field-error');
-        if (pizzaSelected) {
-            pizzaError.classList.add('hidden');
-        } else {
-            pizzaError.classList.remove('hidden');
-        }
-
-        const isValid = namesValid && pizzaSelected;
+        const isValid = nameValid && emailValid && phoneValid && namesValid && pizzaSelected;
         submitBtn.disabled = !isValid;
         return isValid;
     }
@@ -90,6 +141,7 @@ if (rsvpForm) {
     attendingRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             isAttending = e.target.value === 'yes';
+            setRadioGroupInvalid(attendingGroup, false);
             
             if (isAttending) {
                 attendingFields.classList.remove('hidden');
@@ -100,9 +152,8 @@ if (rsvpForm) {
                 pizzaYes.checked = false;
                 pizzaNo.checked = false;
                 guestNames.value = '';
-                guestNames.classList.remove('invalid');
-                guestNames.parentElement.querySelector('.field-error').classList.add('hidden');
-                document.querySelector('.pizza-group .field-error').classList.add('hidden');
+                setFieldInvalid(guestNames, false);
+                setRadioGroupInvalid(pizzaGroup, false);
             }
             
             validateForm();
@@ -112,6 +163,8 @@ if (rsvpForm) {
     // Pizza radio change
     pizzaRadios.forEach(radio => {
         radio.addEventListener('change', () => {
+            setRadioGroupInvalid(pizzaGroup, false);
+            
             if (pizzaYes.checked) {
                 pizzaFields.classList.remove('hidden');
             } else {
@@ -121,7 +174,10 @@ if (rsvpForm) {
         });
     });
 
-    // Guest names input
+    // Input event listeners
+    nameInput.addEventListener('input', validateForm);
+    emailInput.addEventListener('input', validateForm);
+    phoneInput.addEventListener('input', validateForm);
     guestNames.addEventListener('input', validateForm);
 
     // Form submission
@@ -129,6 +185,11 @@ if (rsvpForm) {
         e.preventDefault();
         
         if (!validateForm()) {
+            // Scroll to first error
+            const firstError = rsvpForm.querySelector('.invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return;
         }
 
@@ -137,4 +198,7 @@ if (rsvpForm) {
         console.log('Form submitted:', Object.fromEntries(formData));
         alert('Tack för din anmälan!');
     });
+
+    // Run initial validation to show required fields
+    validateForm();
 }

@@ -30,16 +30,56 @@
             </div>
             
             <form id="rsvp-form" class="rsvp-form">
-                <fieldset class="radio-group">
-                    <legend>Jag kommer</legend>
+                <div class="form-group">
+                    <label for="name">
+                        Namn <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        placeholder="Ditt namn"
+                    >
+                    <span class="field-error">Vänligen ange ditt namn</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        E-post <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="namn@exempel.se"
+                    >
+                    <span class="field-error">Vänligen ange en giltig e-postadress</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">
+                        Telefonnummer <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="070-123 45 67"
+                    >
+                    <span class="field-error">Vänligen ange ett telefonnummer</span>
+                </div>
+
+                <fieldset id="attending-group" class="radio-group">
+                    <legend>Jag kommer <span class="required">*</span></legend>
                     <label class="radio-label">
-                        <input type="radio" name="attending" value="yes" required>
+                        <input type="radio" name="attending" value="yes">
                         <span>Ja</span>
                     </label>
                     <label class="radio-label">
-                        <input type="radio" name="attending" value="no" required>
+                        <input type="radio" name="attending" value="no">
                         <span>Nej</span>
                     </label>
+                    <span class="field-error">Vänligen välj ett alternativ</span>
                 </fieldset>
 
                 <div id="attending-fields" class="conditional-fields hidden">
@@ -65,7 +105,7 @@
                             rows="3" 
                             placeholder="Ange namn på alla i sällskapet"
                         ></textarea>
-                        <span class="field-error hidden">Vänligen ange namn på alla gästerna</span>
+                        <span class="field-error">Vänligen ange namn på gästerna</span>
                     </div>
 
                     <div class="form-group">
@@ -73,7 +113,7 @@
                         <textarea id="dietary" name="dietary" rows="2" placeholder="Ange eventuella allergier eller önskemål"></textarea>
                     </div>
 
-                    <fieldset class="radio-group pizza-group">
+                    <fieldset id="pizza-group" class="radio-group pizza-group">
                         <legend>Vi vill vara med på pizzabuffé den 24/7 <span class="required">*</span></legend>
                         <label class="radio-label">
                             <input type="radio" name="pizza" value="yes" id="pizza-yes">
@@ -83,7 +123,7 @@
                             <input type="radio" name="pizza" value="no" id="pizza-no">
                             <span>Nej</span>
                         </label>
-                        <span class="field-error hidden">Vänligen välj ett alternativ</span>
+                        <span class="field-error">Vänligen välj ett alternativ</span>
                     </fieldset>
 
                     <div id="pizza-fields" class="conditional-fields hidden">
@@ -99,9 +139,29 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="song-request">Låtönskningar</label>
+                        <textarea 
+                            id="song-request" 
+                            name="song-request" 
+                            rows="2" 
+                            placeholder="Vilka låtar får dig ut på dansgolvet?"
+                        ></textarea>
+                    </div>
                 </div>
 
-                <button type="submit" id="submit-btn" class="submit-btn">Skicka</button>
+                <div class="form-group">
+                    <label for="message">Meddelande till brudparet</label>
+                    <textarea 
+                        id="message" 
+                        name="message" 
+                        rows="3" 
+                        placeholder="Vill du skicka en hälsning eller har du några frågor?"
+                    ></textarea>
+                </div>
+
+                <button type="submit" id="submit-btn" class="submit-btn" disabled>Skicka</button>
             </form>
         </section>
     </main>
