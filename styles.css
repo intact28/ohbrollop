@@ -5,8 +5,8 @@
     --tan: #CAA67C;
     --cream: #F6E4CC;
     --white: #FFFFFF;
-    --error: #c53030;
-    --error-bg: #fff5f5;
+    --error: #54422C;
+    --error-bg: #F6E4CC;
 }
 
 * {
@@ -398,30 +398,30 @@ section p {
 
 /* Required field indicator */
 .required {
-    color: var(--error);
+    color: var(--medium-brown);
 }
 
 /* Invalid field styling */
 .form-group.invalid input,
 .form-group.invalid textarea,
 .form-group.invalid select {
-    border-color: var(--error);
-    background-color: var(--error-bg);
+    border-color: var(--medium-brown);
+    background-color: var(--cream);
 }
 
 .form-group.invalid label {
-    color: var(--error);
+    color: var(--dark-brown);
 }
 
 /* Field error message */
 .field-error {
     display: none;
-    color: var(--error);
+    color: var(--dark-brown);
     font-size: 0.875rem;
     margin-top: 0.5rem;
     padding: 0.5rem 0.75rem;
-    background-color: var(--error-bg);
-    border-left: 3px solid var(--error);
+    background-color: var(--cream);
+    border-left: 3px solid var(--gold);
     border-radius: 0 4px 4px 0;
 }
 
@@ -432,13 +432,13 @@ section p {
 /* Radio/checkbox group invalid state */
 .radio-group.invalid {
     padding: 1rem;
-    background-color: var(--error-bg);
+    background-color: var(--cream);
     border-radius: 4px;
-    border: 1px solid var(--error);
+    border: 1px solid var(--tan);
 }
 
 .radio-group.invalid legend {
-    color: var(--error);
+    color: var(--dark-brown);
 }
 
 .radio-group .field-error {
