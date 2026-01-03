@@ -1,3 +1,14 @@
+:root {
+    --gold: #C39C21;
+    --dark-brown: #54422C;
+    --medium-brown: #B58D62;
+    --tan: #CAA67C;
+    --cream: #F6E4CC;
+    --white: #FFFFFF;
+    --error: #c53030;
+    --error-bg: #fff5f5;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -9,6 +20,8 @@ body {
     line-height: 1.6;
     display: flex;
     min-height: 100vh;
+    background-color: var(--white);
+    color: var(--dark-brown);
 }
 
 nav {
@@ -18,38 +31,31 @@ nav {
     width: 250px;
     height: 100vh;
     padding: 2rem;
-    background-color: #f8f5f0;
-    border-right: 1px solid #e0d8cf;
+    background-color: var(--dark-brown);
+    border-right: 1px solid var(--medium-brown);
 }
 
 nav h1 {
     font-size: 1.4rem;
     margin-bottom: 2rem;
     font-weight: normal;
-}
-
-nav ul {
-    list-style: none;
-}
-
-nav li {
-    margin-bottom: 1rem;
+    color: var(--cream);
 }
 
 nav a {
     text-decoration: none;
-    color: #555;
+    color: var(--tan);
+    transition: color 0.2s ease;
 }
 
 nav a:hover {
-    color: #000;
+    color: var(--gold);
 }
 
 nav a.active {
-    color: #000;
+    color: var(--gold);
     font-weight: bold;
 }
-
 main {
     margin-left: 250px;
     padding: 3rem;
@@ -58,6 +64,7 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: var(--white);
 }
 
 section {
@@ -65,6 +72,10 @@ section {
     text-align: center;
     width: 100%;
     max-width: 600px;
+}
+
+section p {
+    color: var(--dark-brown);
 }
 
 .heading-group {
@@ -77,6 +88,7 @@ section {
 .heading-group h2 {
     font-weight: normal;
     margin-bottom: 0.3rem;
+    color: var(--dark-brown);
 }
 
 .heading-group .divider {
@@ -109,12 +121,12 @@ section {
 
 .countdown-item span {
     font-size: 2.5rem;
-    color: #B8860B;
+    color: var(--gold);
 }
 
 .countdown-item label {
     font-size: 0.9rem;
-    color: #555;
+    color: var(--medium-brown);
     margin-top: 0.25rem;
 }
 
@@ -125,7 +137,7 @@ section {
     object-fit: cover;
     object-position: center 80%;
     margin-bottom: 2rem;
-    border: 4px solid #B8860B;
+    border: 4px solid var(--gold);
 }
 
 .journey {
@@ -147,7 +159,7 @@ section {
     height: 250px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid #B8860B;
+    border: 3px solid var(--gold);
     display: block;
 }
 
@@ -172,8 +184,8 @@ section {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2.5rem;
-    color: #e63946;
-    text-shadow: 0 0 4px white, 0 0 4px white;
+    color: var(--gold);
+    text-shadow: 0 0 4px var(--white), 0 0 4px var(--white);
     pointer-events: none;
     z-index: 1;
 }
@@ -182,7 +194,7 @@ section {
     margin-top: 0.75rem;
     font-family: 'Brush Script MT', 'Segoe Script', cursive;
     font-size: 1.5rem;
-    color: #B8860B;
+    color: var(--gold);
 }
 
 /* Accordion */
@@ -198,7 +210,7 @@ section {
 }
 
 .accordion-item {
-    border-bottom: 1px solid #e0d8cf;
+    border-bottom: 1px solid var(--tan);
 }
 
 .accordion-header {
@@ -209,21 +221,22 @@ section {
     text-align: left;
     font-family: Georgia, serif;
     font-size: 1rem;
-    color: #333;
+    color: var(--dark-brown);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: color 0.2s ease;
 }
 
 .accordion-header:hover {
-    color: #B8860B;
+    color: var(--gold);
 }
 
 .accordion-header::after {
     content: '+';
     font-size: 1.2rem;
-    color: #B8860B;
+    color: var(--gold);
     transition: transform 0.3s ease;
 }
 
@@ -247,12 +260,12 @@ section {
 
 .accordion-content p {
     padding: 0.5rem 1rem;
-    color: #555;
+    color: var(--dark-brown);
 }
 
 .accordion-content ul {
     padding: 0.5rem 1rem 0.5rem 2.5rem;
-    color: #555;
+    color: var(--dark-brown);
 }
 
 .nested .accordion-header {
@@ -276,7 +289,7 @@ section {
 .rsvp-form legend {
     font-weight: bold;
     margin-bottom: 0.75rem;
-    color: #333;
+    color: var(--dark-brown);
 }
 
 .radio-group {
@@ -293,12 +306,12 @@ section {
 .radio-label input,
 .checkbox-label input {
     margin-right: 0.5rem;
-    accent-color: #B8860B;
+    accent-color: var(--gold);
 }
 
 .radio-label span,
 .checkbox-label span {
-    color: #333;
+    color: var(--dark-brown);
 }
 
 .form-group {
@@ -308,7 +321,7 @@ section {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--dark-brown);
     font-weight: normal;
 }
 
@@ -317,35 +330,37 @@ section {
 .form-group input[type="tel"] {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #e0d8cf;
+    border: 1px solid var(--tan);
     border-radius: 4px;
     font-family: Georgia, serif;
     font-size: 1rem;
-    background-color: #fff;
+    background-color: var(--white);
+    color: var(--dark-brown);
 }
 
 .form-group input[type="text"]:focus,
 .form-group input[type="email"]:focus,
 .form-group input[type="tel"]:focus {
     outline: none;
-    border-color: #B8860B;
+    border-color: var(--gold);
 }
 
 .form-group select,
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #e0d8cf;
+    border: 1px solid var(--tan);
     border-radius: 4px;
     font-family: Georgia, serif;
     font-size: 1rem;
-    background-color: #fff;
+    background-color: var(--white);
+    color: var(--dark-brown);
 }
 
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #B8860B;
+    border-color: var(--gold);
 }
 
 .form-group textarea {
@@ -383,30 +398,30 @@ section {
 
 /* Required field indicator */
 .required {
-    color: #c53030;
+    color: var(--error);
 }
 
 /* Invalid field styling */
 .form-group.invalid input,
 .form-group.invalid textarea,
 .form-group.invalid select {
-    border-color: #c53030;
-    background-color: #fff5f5;
+    border-color: var(--error);
+    background-color: var(--error-bg);
 }
 
 .form-group.invalid label {
-    color: #c53030;
+    color: var(--error);
 }
 
 /* Field error message */
 .field-error {
     display: none;
-    color: #c53030;
+    color: var(--error);
     font-size: 0.875rem;
     margin-top: 0.5rem;
     padding: 0.5rem 0.75rem;
-    background-color: #fff5f5;
-    border-left: 3px solid #c53030;
+    background-color: var(--error-bg);
+    border-left: 3px solid var(--error);
     border-radius: 0 4px 4px 0;
 }
 
@@ -417,13 +432,13 @@ section {
 /* Radio/checkbox group invalid state */
 .radio-group.invalid {
     padding: 1rem;
-    background-color: #fff5f5;
+    background-color: var(--error-bg);
     border-radius: 4px;
-    border: 1px solid #c53030;
+    border: 1px solid var(--error);
 }
 
 .radio-group.invalid legend {
-    color: #c53030;
+    color: var(--error);
 }
 
 .radio-group .field-error {
@@ -455,8 +470,8 @@ section {
     width: 100%;
     padding: 1rem;
     margin-top: 1.5rem;
-    background-color: #B8860B;
-    color: white;
+    background-color: var(--gold);
+    color: var(--white);
     border: none;
     border-radius: 4px;
     font-family: Georgia, serif;
@@ -466,16 +481,66 @@ section {
 }
 
 .submit-btn:hover {
-    background-color: #9a7209;
+    background-color: var(--dark-brown);
 }
 
 .submit-btn:disabled {
-    background-color: #ccc;
+    background-color: var(--tan);
     cursor: not-allowed;
 }
 
 .submit-btn:disabled:hover {
-    background-color: #ccc;
+    background-color: var(--tan);
+}
+
+/* Image Gallery */
+.gallery {
+    width: 100%;
+    margin: 2rem 0;
+    overflow: hidden;
+}
+
+.gallery-track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
+}
+
+/* Scrollbar styling */
+.gallery-track::-webkit-scrollbar {
+    height: 8px;
+}
+
+.gallery-track::-webkit-scrollbar-track {
+    background: var(--cream);
+    border-radius: 4px;
+}
+
+.gallery-track::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 4px;
+}
+
+.gallery-track::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-brown);
+}
+
+.gallery-track img {
+    flex-shrink: 0;
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    scroll-snap-align: start;
+    border: 2px solid var(--tan);
+}
+
+.gallery-track img:hover {
+    border-color: var(--gold);
 }
 
 /* Mobile: stack nav on top */
@@ -494,7 +559,7 @@ section {
         width: 100%;
         height: auto;
         border-right: none;
-        border-bottom: 1px solid #e0d8cf;
+        border-bottom: 1px solid var(--tan);
     }
 
     nav ul {
@@ -562,5 +627,10 @@ section {
 
     .rsvp-form {
         max-width: 100%;
+    }
+
+    .gallery-track img {
+        width: 250px;
+        height: 170px;
     }
 }
