@@ -24,6 +24,21 @@ body {
     color: var(--dark-brown);
 }
 
+a:link {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+a:visited {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--gold);
+    text-decoration: underline;
+}
+
 /* Navigation */
 nav {
     position: fixed;
