@@ -667,6 +667,56 @@ section p {
     border-color: var(--gold);
 }
 
+/* RSVP intro text */
+.rsvp-intro {
+    color: var(--medium-brown);
+    font-style: italic;
+    margin-bottom: 2rem;
+}
+
+/* Confirmation message */
+.confirmation-message {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--cream);
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+.confirmation-icon {
+    font-size: 3rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.confirmation-message p {
+    margin-bottom: 0.75rem;
+}
+
+.confirmation-details {
+    font-size: 0.9rem;
+    color: var(--medium-brown);
+    margin-top: 1.5rem;
+}
+
+/* Submit error */
+.submit-error {
+    background-color: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0 4px 4px 0;
+}
+
+.submit-error p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.submit-error p:last-child {
+    margin-bottom: 0;
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
     body {

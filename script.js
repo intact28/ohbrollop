@@ -1,3 +1,6 @@
+// Google Apps Script URL - REPLACE WITH YOUR URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxf9esQgeQ9PyWsCocpMmiPD_xpbjg_wJUU1eBxredJIp1at1B5exwAy7hJu28v3xlG0A/exec';
+
 // Accordion functionality
 document.querySelectorAll('.accordion-header').forEach(button => {
     button.addEventListener('click', () => {
@@ -38,7 +41,7 @@ if (daysEl) {
     setInterval(updateCountdown, 1000);
 }
 
-// RSVP Form conditional fields and validation
+// RSVP Form
 const rsvpForm = document.getElementById('rsvp-form');
 
 if (rsvpForm) {
@@ -54,6 +57,11 @@ if (rsvpForm) {
     const pizzaGroup = document.getElementById('pizza-group');
     const pizzaFields = document.getElementById('pizza-fields');
     const guestNames = document.getElementById('guest-names');
+    const guestCount = document.getElementById('guest-count');
+    const dietary = document.getElementById('dietary');
+    const pizzaCount = document.getElementById('pizza-count');
+    const songRequest = document.getElementById('song-request');
+    const message = document.getElementById('message');
     const submitBtn = document.getElementById('submit-btn');
     
     let isAttending = null;
@@ -102,21 +110,17 @@ if (rsvpForm) {
         const phoneValid = isValidPhone(phoneInput.value);
         const attendingSelected = isAttending !== null;
 
-        // Always show validation state
         setFieldInvalid(nameInput, !nameValid);
         setFieldInvalid(emailInput, !emailValid);
         setFieldInvalid(phoneInput, !phoneValid);
         setRadioGroupInvalid(attendingGroup, !attendingSelected);
 
-        // If attending not selected yet, disable submit
         if (isAttending === null) {
             submitBtn.disabled = true;
             return false;
         }
 
-        // If not attending, only need name, email and phone
         if (!isAttending) {
-            // Hide errors for attending-specific fields when not attending
             setFieldInvalid(guestNames, false);
             setRadioGroupInvalid(pizzaGroup, false);
             
@@ -125,7 +129,6 @@ if (rsvpForm) {
             return isValid;
         }
 
-        // If attending, validate additional fields
         const namesValid = guestNames.value.trim().length > 0;
         const pizzaSelected = pizzaYes.checked || pizzaNo.checked;
 
@@ -147,7 +150,6 @@ if (rsvpForm) {
                 attendingFields.classList.remove('hidden');
             } else {
                 attendingFields.classList.add('hidden');
-                // Reset fields when switching to No
                 pizzaFields.classList.add('hidden');
                 pizzaYes.checked = false;
                 pizzaNo.checked = false;
@@ -181,11 +183,10 @@ if (rsvpForm) {
     guestNames.addEventListener('input', validateForm);
 
     // Form submission
-    rsvpForm.addEventListener('submit', (e) => {
+    rsvpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!validateForm()) {
-            // Scroll to first error
             const firstError = rsvpForm.querySelector('.invalid');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -193,12 +194,104 @@ if (rsvpForm) {
             return;
         }
 
-        // For now, just log the data - replace with actual submission
-        const formData = new FormData(rsvpForm);
-        console.log('Form submitted:', Object.fromEntries(formData));
-        alert('Tack för din anmälan!');
+        // Store values before disabling form
+        const submittedName = nameInput.value;
+        const submittedEmail = emailInput.value;
+        const submittedAttending = isAttending;
+
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Skickar...';
+
+        const data = {
+            name: nameInput.value,
+            email: emailInput.value,
+            phone: phoneInput.value,
+            attending: isAttending ? 'yes' : 'no',
+            guestCount: guestCount.value,
+            guestNames: guestNames.value,
+            dietary: dietary.value,
+            pizza: pizzaYes.checked ? 'yes' : 'no',
+            pizzaCount: pizzaCount.value,
+            songRequest: songRequest.value,
+            message: message.value
+        };
+
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showConfirmation(true, submittedName, submittedEmail, submittedAttending);
+            } else if (result.error === 'already_submitted') {
+                showAlreadySubmitted(submittedEmail);
+            } else {
+                throw new Error(result.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showConfirmation(false, submittedName, submittedEmail, submittedAttending);
+        }
     });
 
-    // Run initial validation to show required fields
+    // Show confirmation message
+    function showConfirmation(success, name, email, attending) {
+        const section = document.getElementById('rsvp');
+        
+        if (success) {
+            section.innerHTML = `
+                <div class="heading-group">
+                    <h2>Tack för ditt svar!</h2>
+                    <img src="images/divider.svg" alt="" class="divider">
+                </div>
+                <div class="confirmation-message">
+                    <p class="confirmation-icon">♥</p>
+                    <p><strong>${name}</strong>, vi har tagit emot din anmälan.</p>
+                    ${attending 
+                        ? `<p>Vi ser fram emot att fira tillsammans med dig!</p>`
+                        : `<p>Tack för att du meddelade oss. Vi hoppas vi ses en annan gång!</p>`
+                    }
+                    <p class="confirmation-details">En bekräftelse har skickats till oss.</p>
+                </div>
+            `;
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Skicka';
+            
+            let errorDiv = rsvpForm.querySelector('.submit-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'submit-error';
+                rsvpForm.insertBefore(errorDiv, submitBtn);
+            }
+            errorDiv.innerHTML = `
+                <p>Något gick fel när anmälan skulle skickas.</p>
+                <p>Vänligen försök igen eller kontakta oss direkt på <a href="mailto:hannaoskarbrollop2026@gmail.com">hannaoskarbrollop2026@gmail.com</a></p>
+            `;
+        }
+    }
+
+    // Show already submitted message
+    function showAlreadySubmitted(email) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Skicka';
+        
+        let errorDiv = rsvpForm.querySelector('.submit-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'submit-error';
+            rsvpForm.insertBefore(errorDiv, submitBtn);
+        }
+        errorDiv.innerHTML = `
+            <p>E-postadressen <strong>${email}</strong> har redan skickat in en anmälan.</p>
+            <p>Om du behöver ändra din anmälan, vänligen kontakta oss på <a href="mailto:hannaoskarbrollop2026@gmail.com">hannaoskarbrollop2026@gmail.com</a></p>
+        `;
+    }
+
+    // Run initial validation
     validateForm();
 }
