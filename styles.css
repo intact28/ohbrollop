@@ -1,13 +1,17 @@
 :root {
-    --gold: #C39C21;
-    --dark-brown: #54422C;
-    --medium-brown: #B58D62;
-    --tan: #CAA67C;
+    --gold: #e4ba7c;
+    --nav-dark: #334232;
+    --nav-dark-end: #4A5549;
+    --text-dark: #54422C;
+    --accent-medium: #B58D62;
+    --accent-light: #CAA67C;
     --cream: #F6E4CC;
     --white: #FFFFFF;
-    --error: #54422C;
-    --error-bg: #F6E4CC;
 }
+
+/* =================================================================
+   BASE STYLES
+   ================================================================= */
 
 * {
     margin: 0;
@@ -21,7 +25,7 @@ body {
     display: flex;
     min-height: 100vh;
     background-color: var(--white);
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 a:link {
@@ -39,7 +43,10 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Navigation */
+/* =================================================================
+   NAVIGATION
+   ================================================================= */
+
 nav {
     position: fixed;
     left: 0;
@@ -47,7 +54,7 @@ nav {
     width: 280px;
     height: 100vh;
     padding: 2.5rem 2rem;
-    background: linear-gradient(180deg, var(--dark-brown) 0%, #3d3122 100%);
+    background: linear-gradient(180deg, var(--nav-dark) 0%, var(--nav-dark-end) 100%);
     border-right: 3px solid var(--gold);
     display: flex;
     flex-direction: column;
@@ -102,7 +109,7 @@ nav a {
     justify-content: center;
     gap: 0.75rem;
     text-decoration: none;
-    color: var(--tan);
+    color: var(--accent-light);
     padding: 0.75rem 1.25rem;
     border-radius: 4px;
     transition: all 0.3s ease;
@@ -179,7 +186,10 @@ nav a.active::after {
     opacity: 0.6;
 }
 
-/* Main content */
+/* =================================================================
+   MAIN CONTENT
+   ================================================================= */
+
 main {
     margin-left: 280px;
     padding: 3rem;
@@ -199,7 +209,7 @@ section {
 }
 
 section p {
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .heading-group {
@@ -212,7 +222,7 @@ section p {
 .heading-group h2 {
     font-weight: normal;
     margin-bottom: 0.3rem;
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .heading-group .divider {
@@ -229,6 +239,10 @@ section p {
 .page.active {
     display: block;
 }
+
+/* =================================================================
+   COUNTDOWN
+   ================================================================= */
 
 .countdown {
     display: flex;
@@ -250,9 +264,13 @@ section p {
 
 .countdown-item label {
     font-size: 0.9rem;
-    color: var(--medium-brown);
+    color: var(--accent-medium);
     margin-top: 0.25rem;
 }
+
+/* =================================================================
+   PORTRAIT
+   ================================================================= */
 
 .portrait {
     width: 280px;
@@ -263,6 +281,10 @@ section p {
     margin-bottom: 2rem;
     border: 4px solid var(--gold);
 }
+
+/* =================================================================
+   JOURNEY MAP
+   ================================================================= */
 
 .journey {
     display: flex;
@@ -321,7 +343,10 @@ section p {
     color: var(--gold);
 }
 
-/* Accordion */
+/* =================================================================
+   ACCORDION
+   ================================================================= */
+
 .accordion {
     width: 100%;
     margin-top: 1.5rem;
@@ -334,7 +359,7 @@ section p {
 }
 
 .accordion-item {
-    border-bottom: 1px solid var(--tan);
+    border-bottom: 1px solid var(--accent-light);
 }
 
 .accordion-header {
@@ -345,7 +370,7 @@ section p {
     text-align: left;
     font-family: Georgia, serif;
     font-size: 1rem;
-    color: var(--dark-brown);
+    color: var(--text-dark);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -384,12 +409,12 @@ section p {
 
 .accordion-content p {
     padding: 0.5rem 1rem;
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .accordion-content ul {
     padding: 0.5rem 1rem 0.5rem 2.5rem;
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .nested .accordion-header {
@@ -397,7 +422,10 @@ section p {
     padding: 0.75rem 1rem;
 }
 
-/* RSVP Form */
+/* =================================================================
+   RSVP FORM
+   ================================================================= */
+
 .rsvp-form {
     width: 100%;
     max-width: 400px;
@@ -413,7 +441,7 @@ section p {
 .rsvp-form legend {
     font-weight: bold;
     margin-bottom: 0.75rem;
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .radio-group {
@@ -435,7 +463,7 @@ section p {
 
 .radio-label span,
 .checkbox-label span {
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .form-group {
@@ -445,7 +473,7 @@ section p {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: var(--dark-brown);
+    color: var(--text-dark);
     font-weight: normal;
 }
 
@@ -454,12 +482,12 @@ section p {
 .form-group input[type="tel"] {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid var(--tan);
+    border: 1px solid var(--accent-light);
     border-radius: 4px;
     font-family: Georgia, serif;
     font-size: 1rem;
     background-color: var(--white);
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .form-group input[type="text"]:focus,
@@ -473,12 +501,12 @@ section p {
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid var(--tan);
+    border: 1px solid var(--accent-light);
     border-radius: 4px;
     font-family: Georgia, serif;
     font-size: 1rem;
     background-color: var(--white);
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .form-group select:focus,
@@ -505,7 +533,10 @@ section p {
     margin-top: 0.25rem;
 }
 
-/* Conditional fields */
+/* =================================================================
+   CONDITIONAL FIELDS
+   ================================================================= */
+
 .conditional-fields {
     transition: opacity 0.3s ease;
 }
@@ -520,27 +551,28 @@ section p {
     opacity: 1;
 }
 
-/* Required field indicator */
+/* =================================================================
+   FORM VALIDATION STATES
+   ================================================================= */
+
 .required {
-    color: var(--medium-brown);
+    color: var(--accent-medium);
 }
 
-/* Invalid field styling */
 .form-group.invalid input,
 .form-group.invalid textarea,
 .form-group.invalid select {
-    border-color: var(--medium-brown);
+    border-color: var(--accent-medium);
     background-color: var(--cream);
 }
 
 .form-group.invalid label {
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
-/* Field error message */
 .field-error {
     display: none;
-    color: var(--dark-brown);
+    color: var(--text-dark);
     font-size: 0.875rem;
     margin-top: 0.5rem;
     padding: 0.5rem 0.75rem;
@@ -553,16 +585,15 @@ section p {
     display: block;
 }
 
-/* Radio/checkbox group invalid state */
 .radio-group.invalid {
     padding: 1rem;
     background-color: var(--cream);
     border-radius: 4px;
-    border: 1px solid var(--tan);
+    border: 1px solid var(--accent-light);
 }
 
 .radio-group.invalid legend {
-    color: var(--dark-brown);
+    color: var(--text-dark);
 }
 
 .radio-group .field-error {
@@ -574,7 +605,10 @@ section p {
     display: block;
 }
 
-/* Pizza radio group */
+/* =================================================================
+   PIZZA GROUP
+   ================================================================= */
+
 .pizza-group {
     text-align: left;
     margin-top: 1.5rem;
@@ -588,7 +622,10 @@ section p {
     margin: 0 1rem 0 0;
 }
 
-/* Submit button */
+/* =================================================================
+   SUBMIT BUTTON
+   ================================================================= */
+
 .submit-btn {
     display: block;
     width: 100%;
@@ -605,19 +642,22 @@ section p {
 }
 
 .submit-btn:hover {
-    background-color: var(--dark-brown);
+    background-color: var(--nav-dark);
 }
 
 .submit-btn:disabled {
-    background-color: var(--tan);
+    background-color: var(--accent-light);
     cursor: not-allowed;
 }
 
 .submit-btn:disabled:hover {
-    background-color: var(--tan);
+    background-color: var(--accent-light);
 }
 
-/* Image Gallery */
+/* =================================================================
+   IMAGE GALLERY
+   ================================================================= */
+
 .gallery {
     width: 100%;
     margin: 2rem 0;
@@ -634,7 +674,6 @@ section p {
     padding-bottom: 1rem;
 }
 
-/* Scrollbar styling */
 .gallery-track::-webkit-scrollbar {
     height: 8px;
 }
@@ -650,7 +689,7 @@ section p {
 }
 
 .gallery-track::-webkit-scrollbar-thumb:hover {
-    background: var(--dark-brown);
+    background: var(--nav-dark);
 }
 
 .gallery-track img {
@@ -660,21 +699,23 @@ section p {
     object-fit: cover;
     border-radius: 8px;
     scroll-snap-align: start;
-    border: 2px solid var(--tan);
+    border: 2px solid var(--accent-light);
 }
 
 .gallery-track img:hover {
     border-color: var(--gold);
 }
 
-/* RSVP intro text */
+/* =================================================================
+   RSVP CONFIRMATION
+   ================================================================= */
+
 .rsvp-intro {
-    color: var(--medium-brown);
+    color: var(--accent-medium);
     font-style: italic;
     margin-bottom: 2rem;
 }
 
-/* Confirmation message */
 .confirmation-message {
     text-align: center;
     padding: 2rem;
@@ -695,11 +736,14 @@ section p {
 
 .confirmation-details {
     font-size: 0.9rem;
-    color: var(--medium-brown);
+    color: var(--accent-medium);
     margin-top: 1.5rem;
 }
 
-/* Submit error */
+/* =================================================================
+   SUBMIT ERROR
+   ================================================================= */
+
 .submit-error {
     background-color: var(--cream);
     border-left: 3px solid var(--gold);
@@ -717,13 +761,16 @@ section p {
     margin-bottom: 0;
 }
 
-/* Mobile styles */
+/* =================================================================
+   MOBILE STYLES
+   ================================================================= */
+
 @media (max-width: 768px) {
     body {
         flex-direction: column;
     }
 
-        nav {
+    nav {
         position: relative;
         width: 100%;
         height: auto;
