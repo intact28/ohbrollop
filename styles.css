@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&display=swap');
 /* =================================================================
    COLOR PALETTE
    ================================================================= */
@@ -24,7 +25,8 @@
 }
 
 body {
-    font-family: Georgia, serif;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: larger;
     line-height: 1.6;
     display: flex;
     min-height: 100vh;
@@ -52,8 +54,9 @@ a:hover {
    ================================================================= */
 
 h1 {
-    font-family: 'Brush Script MT', 'Segoe Script', 'Bradley Hand', cursive;
+    font-family: 'EB Garamond', 'Segoe Script', 'Bradley Hand', cursive;
     font-weight: normal;
+    font-style: italic;
     color: var(--nav-dark);
     font-size: 2.8rem;
     letter-spacing: 0.02em;
@@ -62,6 +65,8 @@ h1 {
 
 h2 {
     font-weight: normal;
+    font-family: "EB Garamond";
+    font-style: italic;
     color: var(--nav-dark);
     font-size: 1.3rem;
     letter-spacing: 0.05em;
@@ -142,7 +147,7 @@ nav h1 {
 }
 
 .nav-date {
-    font-family: 'Brush Script MT', 'Segoe Script', cursive;
+    font-family: 'EB Garamond', 'Segoe Script', cursive;
     font-size: 1.2rem;
     color: var(--gold);
     margin-bottom: 2rem;

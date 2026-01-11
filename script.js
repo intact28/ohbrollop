@@ -255,7 +255,7 @@ if (rsvpForm) {
                         ? `<p>Vi ser fram emot att fira tillsammans med dig!</p>`
                         : `<p>Tack för att du meddelade oss. Vi hoppas vi ses en annan gång!</p>`
                     }
-                    <p class="confirmation-details">En bekräftelse har skickats till oss.</p>
+                    <p class="confirmation-details">En bekräftelse har skickats till dig och till oss.</p>
                 </div>
             `;
         } else {
