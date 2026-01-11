@@ -1,4 +1,4 @@
-// Google Apps Script URL - REPLACE WITH YOUR URL
+// Google Apps Script URL
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxf9esQgeQ9PyWsCocpMmiPD_xpbjg_wJUU1eBxredJIp1at1B5exwAy7hJu28v3xlG0A/exec';
 
 // Accordion functionality
