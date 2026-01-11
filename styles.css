@@ -1,3 +1,7 @@
+/* =================================================================
+   COLOR PALETTE
+   ================================================================= */
+
 :root {
     --gold: #e4ba7c;
     --nav-dark: #334232;
@@ -44,6 +48,62 @@ a:hover {
 }
 
 /* =================================================================
+   HEADINGS
+   ================================================================= */
+
+h1 {
+    font-family: 'Brush Script MT', 'Segoe Script', 'Bradley Hand', cursive;
+    font-weight: normal;
+    color: var(--nav-dark);
+    font-size: 2.8rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-weight: normal;
+    color: var(--nav-dark);
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.4rem;
+}
+
+/* Decorative underline for h2 */
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+/* Section headings - centered with symmetric underline */
+section h2 {
+    display: block;
+    text-align: center;
+}
+
+section h2::after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    min-width: 80px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* Main page title styling */
+.heading-group h1 {
+    font-size: 3.2rem;
+    color: var(--text-dark);
+}
+
+/* =================================================================
    NAVIGATION
    ================================================================= */
 
@@ -72,6 +132,7 @@ nav::before {
 }
 
 nav h1 {
+    font-family: Georgia, serif;
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
     font-weight: normal;
@@ -330,7 +391,7 @@ section p {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2.5rem;
-    color: var(--gold);
+    color: #b91313;
     text-shadow: 0 0 4px var(--white), 0 0 4px var(--white);
     pointer-events: none;
     z-index: 1;
@@ -444,28 +505,6 @@ section p {
     color: var(--text-dark);
 }
 
-.radio-group {
-    text-align: center;
-}
-
-.radio-group .radio-label {
-    display: inline-flex;
-    align-items: center;
-    margin: 0 1rem;
-    cursor: pointer;
-}
-
-.radio-label input,
-.checkbox-label input {
-    margin-right: 0.5rem;
-    accent-color: var(--gold);
-}
-
-.radio-label span,
-.checkbox-label span {
-    color: var(--text-dark);
-}
-
 .form-group {
     margin-bottom: 1.25rem;
 }
@@ -534,6 +573,43 @@ section p {
 }
 
 /* =================================================================
+   RADIO GROUPS
+   ================================================================= */
+
+.radio-group {
+    text-align: center;
+    padding: 0.5rem 0 1rem 0;
+}
+
+.radio-group legend {
+    margin-bottom: 1rem;
+    padding-bottom: 0.25rem;
+}
+
+.radio-group .radio-label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 1rem;
+    cursor: pointer;
+}
+
+.radio-label input,
+.checkbox-label input {
+    margin-right: 0.5rem;
+    accent-color: var(--gold);
+}
+
+.radio-label span,
+.checkbox-label span {
+    color: var(--text-dark);
+}
+
+.radio-group .field-error {
+    text-align: left;
+    margin-top: 1rem;
+}
+
+/* =================================================================
    CONDITIONAL FIELDS
    ================================================================= */
 
@@ -583,22 +659,6 @@ section p {
 
 .form-group.invalid .field-error {
     display: block;
-}
-
-.radio-group.invalid {
-    padding: 1rem;
-    background-color: var(--cream);
-    border-radius: 4px;
-    border: 1px solid var(--accent-light);
-}
-
-.radio-group.invalid legend {
-    color: var(--text-dark);
-}
-
-.radio-group .field-error {
-    text-align: left;
-    margin-top: 0.75rem;
 }
 
 .radio-group.invalid .field-error {
@@ -847,6 +907,18 @@ section p {
         margin-left: 0;
         padding: 2rem;
         justify-content: flex-start;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    .heading-group h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 1.15rem;
     }
 
     .countdown {
