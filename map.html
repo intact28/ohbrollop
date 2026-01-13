@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schema | Hanna & Oskar</title>
+    <title>Karta | Hanna & Oskar</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,9 +18,9 @@
             <li><a href="accomodation.html">Boendet</a></li>
             <li><a href="important.html">Information</a></li>
             <li><a href="rsvp.html">Anmälan</a></li>
-            <li><a href="schedule.html" class="active">Schema</a></li>
+            <li><a href="schedule.html">Schema</a></li>
             <li><a href="travel.html">Resa</a></li>
-            <li><a href="map.html">Karta</a></li>
+            <li><a href="map.html" class="active">Karta</a></li>
             <li><a href="contact.html">Kontakta Oss</a></li>
         </ul>
         <div class="nav-footer">
@@ -33,20 +33,30 @@
 
     <main>
         <img src="images/hanna_oskar.jpg" alt="Hanna och Oskar" class="portrait">
-        <section id="schedule" class="page active">
+        <section id="karta" class="page active">
             <div class="heading-group">
-                <h1>Schema</h1>
+                <h1>Karta</h1>
                 <img src="images/divider.svg" alt="" class="divider">
             </div>
-            <p><strong>Exakt schema kommer publiceras när vi närmar oss den stora dagen.</strong></p>
-            <h2>Fredag 24/7</h2>
-            <p>Pizzabuffé på Ekerums Resort</p>
-            <p>Mingel på Sunset Sportbar på Ekerum Resort. Bar med biljard, dart, shuffleboard</p>
-            <h2>Lördag 25/7</h2>
-            <p>Vigsel</p>
-            <p>Middag & Fest</p>
-            <h2>Söndag 26/7</h2>
-            <p>Gemensam frukost på Ekerum Resort</p>
+
+            <figure class="map-figure">
+                <figcaption>Översikt</figcaption>
+                <img src="images/karta-oversikt.png" alt="Översiktskarta som visar vägen från hotellet till vigselplatsen">
+            </figure>
+            
+            <figure class="map-figure">
+                <figcaption>Hotellet</figcaption>
+                <img src="images/karta-hotell.png" alt="Detaljerad karta över hotellets område">
+            </figure>
+
+            <div class="map-legend">
+                <p><strong>1</strong> Middag & Fest</p>
+                <p><strong>2</strong> Brudskål</p>
+                <p><strong>3</strong> Pizzabuffé</p>
+                <p><strong>4</strong> Hotell Reception</p>
+                <p><strong>5</strong> Frukost</p>
+                <p><strong>6</strong> Vigsel</p>
+            </div>
         </section>
     </main>
 </body>

@@ -827,6 +827,50 @@ section p {
 }
 
 /* =================================================================
+   MAP PAGE
+   ================================================================= */
+
+.map-figure {
+    margin: 0 0 1.5rem 0;
+}
+
+.map-figure figcaption {
+    font-style: italic;
+    color: var(--accent-medium);
+    margin-bottom: 0.5rem;
+}
+
+.map-figure img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid var(--gold);
+}
+
+.map-legend {
+    background-color: var(--cream);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0.4rem 1.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.map-legend p {
+    margin: 0;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.map-legend strong {
+    color: var(--gold);
+    margin-right: 0.3rem;
+}
+
+/* =================================================================
    MOBILE STYLES
    ================================================================= */
 
