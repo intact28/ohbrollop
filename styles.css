@@ -852,17 +852,17 @@ section p {
     background-color: var(--cream);
     border-radius: 8px;
     padding: 1rem 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    gap: 0.4rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 0.5rem 1.5rem;
     margin-top: 0.5rem;
+    max-width: 100%;
 }
 
 .map-legend p {
     margin: 0;
     text-align: left;
-    white-space: nowrap;
 }
 
 .map-legend strong {
@@ -1026,12 +1026,9 @@ section p {
         height: 170px;
     }
 
-    .map-legend {
-        grid-template-columns: repeat(2, auto);
-        gap: 0.3rem 1.5rem;
+     .map-legend {
+        gap: 0.3rem 1rem;
         padding: 0.75rem 1rem;
-        max-width: 100%;
-        overflow: hidden;
     }
 
     .map-legend p {
