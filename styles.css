@@ -856,7 +856,8 @@ section p {
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.5rem 1.5rem;
-    margin-top: 0.5rem;
+    margin: 0.5rem auto 0;
+    width: fit-content;
     max-width: 100%;
 }
 
