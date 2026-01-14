@@ -1025,4 +1025,14 @@ section p {
         width: 250px;
         height: 170px;
     }
+
+        .map-legend {
+        grid-template-columns: repeat(2, auto);
+        gap: 0.3rem 1.5rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .map-figure img {
+        max-width: 100%;
+    }
 }
