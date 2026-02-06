@@ -1020,6 +1020,130 @@ section p {
 }
 
 /* =================================================================
+   TIMELINE SCHEDULE
+   ================================================================= */
+
+.timeline {
+    position: relative;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+/* Vertical center line */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gold);
+    transform: translateX(-50%);
+    opacity: 0.4;
+}
+
+.timeline-day {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    margin: 1.75rem 0 1rem;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+}
+
+.timeline-day:first-child {
+    margin-top: 0;
+}
+
+/* Background "pill" that covers the line */
+.timeline-day::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -0.4rem;
+    transform: translateX(-50%);
+    width: 160px;
+    height: calc(100% + 0.8rem);
+    background-color: var(--white);
+    z-index: -1;
+    border-radius: 20px;
+}
+
+/* Small decorative lines flanking the text */
+.timeline-day::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0.3rem auto 0;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+/* Center dot on the line */
+.timeline-dot {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--gold);
+    border: 2px solid var(--white);
+    box-shadow: 0 0 0 2px var(--gold);
+    z-index: 1;
+}
+
+.timeline-image {
+    flex: 0 0 120px;
+}
+
+.timeline-image img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--gold);
+}
+
+.timeline-content {
+    flex: 0 0 120px;
+}
+
+/* Content is on the right (after dot) → left-align */
+.timeline-item .timeline-dot + .timeline-content {
+    text-align: left;
+}
+
+/* Content is on the left (before dot) → right-align */
+.timeline-item .timeline-content:first-child {
+    text-align: right;
+}
+
+.timeline-time {
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+}
+
+.timeline-content p {
+    margin-top: 0.25rem;
+    color: var(--text-dark);
+}
+
+
+/* =================================================================
    MOBILE STYLES
    ================================================================= */
 
@@ -1215,5 +1339,27 @@ section p {
 
     .video-header-text .subtitle {
         font-size: 1rem;
+    }
+
+    .timeline-image {
+    flex: 0 0 90px;
+    }
+
+    .timeline-content {
+    flex: 0 0 90px;
+    }
+
+    .timeline-item {
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .timeline-time {
+        font-size: 1.2rem;
+    }
+
+    .timeline-day {
+        font-size: 1.2rem;
+        margin: 2rem 0 1.25rem;
     }
 }
