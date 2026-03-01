@@ -1050,7 +1050,7 @@ section p {
     font-family: 'EB Garamond', Georgia, serif;
     font-style: italic;
     font-weight: 900;
-    font-size: 1.4rem;
+    font-size: 2rem;
     color: var(--gold);
     letter-spacing: 0.05em;
 }
@@ -1077,10 +1077,10 @@ section p {
 .timeline-day::after {
     content: '';
     display: block;
-    width: 60px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 0.3rem auto 0;
+    width: 500px;
+    height: 20px;
+    background: url('images/divider.svg') center / contain no-repeat;
+    margin: 0.5rem auto 0;
 }
 
 .timeline-item {
@@ -1131,7 +1131,7 @@ section p {
 }
 
 .timeline-time {
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     font-style: italic;
     color: var(--gold);
     letter-spacing: 0.05em;
