@@ -12,7 +12,7 @@ document.querySelectorAll('.accordion-header').forEach(button => {
 // Countdown timer (only runs on home page)
 const daysEl = document.getElementById('days');
 if (daysEl) {
-    const weddingDate = new Date('2026-07-25T15:00:00');
+    const weddingDate = new Date('2026-07-25T14:00:00');
 
     function updateCountdown() {
         const now = new Date();
