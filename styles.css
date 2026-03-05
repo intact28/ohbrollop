@@ -644,8 +644,14 @@ section p {
 .form-group.invalid input,
 .form-group.invalid textarea,
 .form-group.invalid select {
-    border-color: var(--accent-medium);
+    border-color: var(--gold);
+    border-width: 2px;
     background-color: var(--cream);
+}
+
+.radio-group.invalid {
+    border-left: 3px solid var(--gold);
+    padding-left: 0.75rem;
 }
 
 .form-group.invalid label {
@@ -664,11 +670,11 @@ section p {
 }
 
 .form-group.invalid .field-error {
-    display: block;
+    display: none;
 }
 
 .radio-group.invalid .field-error {
-    display: block;
+    display: none;
 }
 
 /* =================================================================
