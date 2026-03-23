@@ -103,6 +103,23 @@ if (rsvpForm) {
         }
     }
 
+    // Update the validation summary above the submit button
+    function updateValidationSummary(errors) {
+        const summary = document.getElementById('validation-summary');
+        if (!summary) return;
+
+        if (errors.length === 0) {
+            summary.innerHTML = '';
+            summary.classList.remove('visible');
+            return;
+        }
+
+        summary.innerHTML = errors
+            .map(msg => `<p class="summary-error"><span class="summary-x">✕</span>${msg}</p>`)
+            .join('');
+        summary.classList.add('visible');
+    }
+
     // Validate form and update submit button state
     function validateForm() {
         const nameValid = isValidName(nameInput.value);
@@ -115,7 +132,14 @@ if (rsvpForm) {
         setFieldInvalid(phoneInput, !phoneValid);
         setRadioGroupInvalid(attendingGroup, !attendingSelected);
 
+        const errors = [];
+        if (!nameValid) errors.push('Vänligen ange ditt namn');
+        if (!emailValid) errors.push('Vänligen ange en giltig e-postadress');
+        if (!phoneValid) errors.push('Vänligen ange ett telefonnummer');
+        if (!attendingSelected) errors.push('Vänligen välj om du kommer eller ej');
+
         if (isAttending === null) {
+            updateValidationSummary(errors);
             submitBtn.disabled = true;
             return false;
         }
@@ -123,8 +147,8 @@ if (rsvpForm) {
         if (!isAttending) {
             setFieldInvalid(guestNames, false);
             setRadioGroupInvalid(pizzaGroup, false);
-            
             const isValid = nameValid && emailValid && phoneValid;
+            updateValidationSummary(errors);
             submitBtn.disabled = !isValid;
             return isValid;
         }
@@ -135,7 +159,11 @@ if (rsvpForm) {
         setFieldInvalid(guestNames, !namesValid);
         setRadioGroupInvalid(pizzaGroup, !pizzaSelected);
 
+        if (!namesValid) errors.push('Vänligen ange namn på alla i sällskapet');
+        if (!pizzaSelected) errors.push('Vänligen välj om ni vill vara med på pizzabuffén');
+
         const isValid = nameValid && emailValid && phoneValid && namesValid && pizzaSelected;
+        updateValidationSummary(errors);
         submitBtn.disabled = !isValid;
         return isValid;
     }
@@ -178,9 +206,13 @@ if (rsvpForm) {
 
     // Input event listeners
     nameInput.addEventListener('input', validateForm);
+    nameInput.addEventListener('change', validateForm);
     emailInput.addEventListener('input', validateForm);
+    emailInput.addEventListener('change', validateForm);
     phoneInput.addEventListener('input', validateForm);
+    phoneInput.addEventListener('change', validateForm);
     guestNames.addEventListener('input', validateForm);
+    guestNames.addEventListener('change', validateForm);
 
     // Form submission
     rsvpForm.addEventListener('submit', async (e) => {
@@ -310,7 +342,7 @@ if (lightbox) {
             lightboxImg.src = img.src;
             lightboxImg.alt = img.alt;
             lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.style.overflow = 'hidden';
         });
     });
 
@@ -336,6 +368,6 @@ if (lightbox) {
 
     function closeLightbox() {
         lightbox.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
     }
 }

@@ -727,6 +727,43 @@ section p {
 }
 
 /* =================================================================
+   VALIDATION SUMMARY
+   ================================================================= */
+
+.validation-summary {
+    display: none;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--cream);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+}
+
+.validation-summary.visible {
+    display: block;
+}
+
+.summary-error {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    margin-bottom: 0.35rem;
+}
+
+.summary-error:last-child {
+    margin-bottom: 0;
+}
+
+.summary-x {
+    color: var(--accent-medium);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    line-height: 1.6;
+}
+
+/* =================================================================
    IMAGE GALLERY
    ================================================================= */
 
@@ -1148,7 +1185,6 @@ section p {
     color: var(--text-dark);
 }
 
-
 /* =================================================================
    MOBILE STYLES
    ================================================================= */
@@ -1271,12 +1307,12 @@ section p {
     }
 
     .map-container {
-    flex-direction: column;
-    align-items: center;
+        flex-direction: column;
+        align-items: center;
     }
 
     .map-figure {
-    max-width: 100%;
+        max-width: 100%;
     }
 
     .map-mobile {
@@ -1314,7 +1350,7 @@ section p {
         height: 170px;
     }
 
-     .map-legend {
+    .map-legend {
         gap: 0.3rem 1rem;
         padding: 0.75rem 1rem;
     }
@@ -1323,7 +1359,6 @@ section p {
         white-space: normal;
     }
 
-    
     .map-figure img {
         max-width: 100%;
     }
@@ -1348,11 +1383,11 @@ section p {
     }
 
     .timeline-image {
-    flex: 0 0 90px;
+        flex: 0 0 90px;
     }
 
     .timeline-content {
-    flex: 0 0 90px;
+        flex: 0 0 90px;
     }
 
     .timeline-item {
@@ -1370,6 +1405,6 @@ section p {
     }
 
     .timeline-day::after {
-    width: 160px;
-}
+        width: 160px;
+    }
 }

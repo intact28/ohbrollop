@@ -109,7 +109,7 @@
 
                     <div class="form-group">
                         <label for="guest-names">
-                            Namn på gäster <span class="required">*</span>
+                            Namn på all gäster i sällskapet<span class="required">*</span>
                         </label>
                         <textarea 
                             id="guest-names" 
@@ -169,9 +169,11 @@
                         id="message" 
                         name="message" 
                         rows="3" 
-                        placeholder="Vill du skicka en hälsning eller har du några frågor?"
+                        placeholder="Vill du skicka en hälsning eller har du några frågor? Om du vill hålla tal skriv det här."
                     ></textarea>
                 </div>
+
+                <div id="validation-summary" class="validation-summary"></div>
 
                 <button type="submit" id="submit-btn" class="submit-btn" disabled>Skicka</button>
             </form>
