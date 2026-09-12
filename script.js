@@ -1,373 +1,1344 @@
-// Google Apps Script URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxf9esQgeQ9PyWsCocpMmiPD_xpbjg_wJUU1eBxredJIp1at1B5exwAy7hJu28v3xlG0A/exec';
+/* ================================================================
+   MEDIA DATA
+   ================================================================ */
 
-// Accordion functionality
-document.querySelectorAll('.accordion-header').forEach(button => {
-    button.addEventListener('click', () => {
-        const item = button.parentElement;
-        item.classList.toggle('open');
-    });
-});
+let media = [];
 
-// Countdown timer (only runs on home page)
-const daysEl = document.getElementById('days');
-if (daysEl) {
-    const weddingDate = new Date('2026-07-25T14:00:00');
+let visibleMedia = [];
 
-    function updateCountdown() {
-        const now = new Date();
-        const diff = weddingDate - now;
-        
-        if (diff <= 0) {
-            document.getElementById('days').textContent = '0';
-            document.getElementById('hours').textContent = '0';
-            document.getElementById('minutes').textContent = '0';
-            document.getElementById('seconds').textContent = '0';
-            return;
+let activeFilter = 'all';
+
+let activePhotographerFilter = 'all';
+
+
+/*
+ * Because we are serving the original full-resolution files,
+ * don't put every image into the DOM at once.
+ */
+const ITEMS_PER_BATCH = 40;
+
+let renderedCount = 0;
+
+let isRenderingBatch = false;
+
+
+
+/* ================================================================
+   DOM REFERENCES
+   ================================================================ */
+
+const photoGrid =
+    document.getElementById(
+        'photo-grid'
+    );
+
+
+const emptyGallery =
+    document.getElementById(
+        'empty-gallery'
+    );
+
+
+const filterButtons =
+    document.querySelectorAll(
+        '.filter-button'
+    );
+
+
+const photographerFilterWrapper =
+    document.getElementById(
+        'photographer-filter-wrapper'
+    );
+
+
+const photographerFilterButtons =
+    document.querySelectorAll(
+        '.photographer-filter-button'
+    );
+
+const albumOrder = {
+    photographer: 0,
+    guests: 1,
+    photobooth: 2
+};
+
+const photographerCategoryOrder = {
+    forberedelser: 0,
+    vigsel: 1,
+    brudfolje: 2,
+    portratt: 3,
+    mingel: 4,
+    'gruppbild-familj': 5,
+    middag: 6,
+    'golden-hour': 7
+};
+
+
+function sortMediaForGallery(items) {
+
+    return [...items].sort(
+        (a, b) => {
+
+            const albumDifference =
+                albumOrder[a.album] -
+                albumOrder[b.album];
+
+
+            if (albumDifference !== 0) {
+                return albumDifference;
+            }
+
+
+            /*
+             * Only photographer images need
+             * category ordering.
+             */
+            if (
+                a.album === 'photographer' &&
+                b.album === 'photographer'
+            ) {
+
+                return (
+                    photographerCategoryOrder[a.category] -
+                    photographerCategoryOrder[b.category]
+                );
+
+            }
+
+
+            /*
+             * Keep the existing order within
+             * the same category/album.
+             */
+            return 0;
+
         }
-        
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        
-        document.getElementById('days').textContent = days;
-        document.getElementById('hours').textContent = hours;
-        document.getElementById('minutes').textContent = minutes;
-        document.getElementById('seconds').textContent = seconds;
-    }
+    );
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
 }
 
-// RSVP Form
-const rsvpForm = document.getElementById('rsvp-form');
 
-if (rsvpForm) {
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const phoneInput = document.getElementById('phone');
-    const attendingRadios = document.querySelectorAll('input[name="attending"]');
-    const attendingGroup = document.getElementById('attending-group');
-    const attendingFields = document.getElementById('attending-fields');
-    const pizzaRadios = document.querySelectorAll('input[name="pizza"]');
-    const pizzaYes = document.getElementById('pizza-yes');
-    const pizzaNo = document.getElementById('pizza-no');
-    const pizzaGroup = document.getElementById('pizza-group');
-    const pizzaFields = document.getElementById('pizza-fields');
-    const guestNames = document.getElementById('guest-names');
-    const guestCount = document.getElementById('guest-count');
-    const dietary = document.getElementById('dietary');
-    const pizzaCount = document.getElementById('pizza-count');
-    const songRequest = document.getElementById('song-request');
-    const message = document.getElementById('message');
-    const submitBtn = document.getElementById('submit-btn');
-    
-    let isAttending = null;
 
-    // Validation helpers
-    function isValidName(name) {
-        return name.trim().length >= 2;
-    }
+/* ================================================================
+   LOAD MEDIA.JSON
+   ================================================================ */
 
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
+async function loadMedia() {
 
-    function isValidPhone(phone) {
-        const digits = phone.replace(/\D/g, '');
-        return digits.length >= 8;
-    }
+    try {
 
-    // Update field validation UI
-    function setFieldInvalid(input, isInvalid) {
-        const formGroup = input.closest('.form-group');
-        if (formGroup) {
-            if (isInvalid) {
-                formGroup.classList.add('invalid');
-            } else {
-                formGroup.classList.remove('invalid');
-            }
-        }
-    }
+        const response =
+            await fetch('media.json');
 
-    // Update radio group validation UI
-    function setRadioGroupInvalid(group, isInvalid) {
-        if (group) {
-            if (isInvalid) {
-                group.classList.add('invalid');
-            } else {
-                group.classList.remove('invalid');
-            }
-        }
-    }
 
-    // Update the validation summary above the submit button
-    function updateValidationSummary(errors) {
-        const summary = document.getElementById('validation-summary');
-        if (!summary) return;
+        if (!response.ok) {
 
-        if (errors.length === 0) {
-            summary.innerHTML = '';
-            summary.classList.remove('visible');
-            return;
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+
         }
 
-        summary.innerHTML = errors
-            .map(msg => `<p class="summary-error"><span class="summary-x">✕</span>${msg}</p>`)
-            .join('');
-        summary.classList.add('visible');
+
+        const loadedMedia =
+            await response.json();
+
+
+        media =
+            sortMediaForGallery(
+                loadedMedia
+            );
+
+
+        console.log(
+            `Loaded ${media.length} media items`
+        );
+
+
+        renderGallery();
+
     }
 
-    // Validate form and update submit button state
-    function validateForm() {
-        const nameValid = isValidName(nameInput.value);
-        const emailValid = isValidEmail(emailInput.value);
-        const phoneValid = isValidPhone(phoneInput.value);
-        const attendingSelected = isAttending !== null;
+    catch (error) {
 
-        setFieldInvalid(nameInput, !nameValid);
-        setFieldInvalid(emailInput, !emailValid);
-        setFieldInvalid(phoneInput, !phoneValid);
-        setRadioGroupInvalid(attendingGroup, !attendingSelected);
+        console.error(
+            'Failed to load media.json:',
+            error
+        );
 
-        const errors = [];
-        if (!nameValid) errors.push('Vänligen ange ditt namn');
-        if (!emailValid) errors.push('Vänligen ange en giltig e-postadress');
-        if (!phoneValid) errors.push('Vänligen ange ett telefonnummer');
-        if (!attendingSelected) errors.push('Vänligen välj om du kommer eller ej');
 
-        if (isAttending === null) {
-            updateValidationSummary(errors);
-            submitBtn.disabled = true;
-            return false;
-        }
+        emptyGallery.hidden =
+            false;
 
-        if (!isAttending) {
-            setFieldInvalid(guestNames, false);
-            setRadioGroupInvalid(pizzaGroup, false);
-            const isValid = nameValid && emailValid && phoneValid;
-            updateValidationSummary(errors);
-            submitBtn.disabled = !isValid;
-            return isValid;
-        }
 
-        const namesValid = guestNames.value.trim().length > 0;
-        const pizzaSelected = pizzaYes.checked || pizzaNo.checked;
+        emptyGallery.textContent =
+            'Kunde inte ladda bilderna. Försök igen senare.';
 
-        setFieldInvalid(guestNames, !namesValid);
-        setRadioGroupInvalid(pizzaGroup, !pizzaSelected);
-
-        if (!namesValid) errors.push('Vänligen ange namn på alla i sällskapet');
-        if (!pizzaSelected) errors.push('Vänligen välj om ni vill vara med på pizzabuffén');
-
-        const isValid = nameValid && emailValid && phoneValid && namesValid && pizzaSelected;
-        updateValidationSummary(errors);
-        submitBtn.disabled = !isValid;
-        return isValid;
     }
 
-    // Attending radio change
-    attendingRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            isAttending = e.target.value === 'yes';
-            setRadioGroupInvalid(attendingGroup, false);
-            
-            if (isAttending) {
-                attendingFields.classList.remove('hidden');
-            } else {
-                attendingFields.classList.add('hidden');
-                pizzaFields.classList.add('hidden');
-                pizzaYes.checked = false;
-                pizzaNo.checked = false;
-                guestNames.value = '';
-                setFieldInvalid(guestNames, false);
-                setRadioGroupInvalid(pizzaGroup, false);
-            }
-            
-            validateForm();
-        });
-    });
+}
 
-    // Pizza radio change
-    pizzaRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            setRadioGroupInvalid(pizzaGroup, false);
-            
-            if (pizzaYes.checked) {
-                pizzaFields.classList.remove('hidden');
-            } else {
-                pizzaFields.classList.add('hidden');
-            }
-            validateForm();
-        });
-    });
 
-    // Input event listeners
-    nameInput.addEventListener('input', validateForm);
-    nameInput.addEventListener('change', validateForm);
-    emailInput.addEventListener('input', validateForm);
-    emailInput.addEventListener('change', validateForm);
-    phoneInput.addEventListener('input', validateForm);
-    phoneInput.addEventListener('change', validateForm);
-    guestNames.addEventListener('input', validateForm);
-    guestNames.addEventListener('change', validateForm);
 
-    // Form submission
-    rsvpForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (!validateForm()) {
-            const firstError = rsvpForm.querySelector('.invalid');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            return;
-        }
+/* ================================================================
+   FILTER MEDIA
+   ================================================================ */
 
-        // Store values before disabling form
-        const submittedName = nameInput.value;
-        const submittedEmail = emailInput.value;
-        const submittedAttending = isAttending;
+function updateVisibleMedia() {
 
-        // Disable button and show loading state
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Skickar...';
+    /*
+     * ALL
+     */
 
-        const data = {
-            name: nameInput.value,
-            email: emailInput.value,
-            phone: phoneInput.value,
-            attending: isAttending ? 'yes' : 'no',
-            guestCount: guestCount.value,
-            guestNames: guestNames.value,
-            dietary: dietary.value,
-            pizza: pizzaYes.checked ? 'yes' : 'no',
-            pizzaCount: pizzaCount.value,
-            songRequest: songRequest.value,
-            message: message.value
-        };
+    if (
+        activeFilter === 'all'
+    ) {
 
-        try {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(data)
+        visibleMedia = [
+            ...media
+        ];
+
+        return;
+
+    }
+
+
+
+    /*
+     * PHOTOGRAPHER
+     */
+
+    if (
+        activeFilter ===
+        'photographer'
+    ) {
+
+        visibleMedia =
+            media.filter(item => {
+
+                if (
+                    item.album !==
+                    'photographer'
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    activePhotographerFilter ===
+                    'all'
+                ) {
+
+                    return true;
+
+                }
+
+
+                return (
+                    item.category ===
+                    activePhotographerFilter
+                );
+
             });
 
-            const result = await response.json();
 
-            if (result.success) {
-                showConfirmation(true, submittedName, submittedEmail, submittedAttending);
-            } else if (result.error === 'already_submitted') {
-                showAlreadySubmitted(submittedEmail);
-            } else {
-                throw new Error(result.message || 'Unknown error');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showConfirmation(false, submittedName, submittedEmail, submittedAttending);
+        return;
+
+    }
+
+
+
+    /*
+     * GUESTS / PHOTOBOOTH
+     */
+
+    visibleMedia =
+        media.filter(
+            item =>
+                item.album ===
+                activeFilter
+        );
+
+}
+
+
+
+/* ================================================================
+   RENDER GALLERY
+   ================================================================ */
+
+function renderGallery() {
+
+    updateVisibleMedia();
+
+
+    photoGrid.innerHTML =
+        '';
+
+
+    renderedCount =
+        0;
+
+
+    if (
+        visibleMedia.length === 0
+    ) {
+
+        emptyGallery.hidden =
+            false;
+
+        return;
+
+    }
+
+
+    emptyGallery.hidden =
+        true;
+
+
+    renderNextBatch();
+
+}
+
+
+
+function getMediaGroupKey(item) {
+
+    if (item.album === 'photographer') {
+        return `photographer-${item.category}`;
+    }
+
+    return item.album;
+}
+
+
+function renderNextBatch() {
+
+    if (isRenderingBatch) {
+        return;
+    }
+
+    if (
+        renderedCount >=
+        visibleMedia.length
+    ) {
+        return;
+    }
+
+
+    isRenderingBatch = true;
+
+
+    /*
+     * Determine which category/album this batch belongs to.
+     *
+     * A batch is NEVER allowed to contain media from
+     * two different groups.
+     */
+    const firstItem =
+        visibleMedia[renderedCount];
+
+    const currentGroup =
+        getMediaGroupKey(firstItem);
+
+
+    let batchEnd =
+        renderedCount;
+
+
+    /*
+     * Add up to ITEMS_PER_BATCH items,
+     * but stop immediately if the next item belongs
+     * to another category/album.
+     */
+    while (
+        batchEnd < visibleMedia.length &&
+        batchEnd < renderedCount + ITEMS_PER_BATCH &&
+        getMediaGroupKey(
+            visibleMedia[batchEnd]
+        ) === currentGroup
+    ) {
+
+        batchEnd++;
+
+    }
+
+
+    const batch =
+        document.createElement('div');
+
+    batch.className =
+        'photo-batch';
+
+
+    for (
+        let index = renderedCount;
+        index < batchEnd;
+        index++
+    ) {
+
+        const item =
+            visibleMedia[index];
+
+
+        const card =
+            createMediaCard(
+                item,
+                index
+            );
+
+
+        batch.appendChild(
+            card
+        );
+
+    }
+
+
+    photoGrid.appendChild(
+        batch
+    );
+
+
+    renderedCount =
+        batchEnd;
+
+
+    isRenderingBatch =
+        false;
+
+}
+
+
+
+/* ================================================================
+   CREATE MEDIA CARD
+   ================================================================ */
+
+function createMediaCard(
+    item,
+    index
+) {
+
+    const button =
+        document.createElement(
+            'button'
+        );
+
+
+    button.className =
+        'photo-card';
+
+
+    button.type =
+        'button';
+
+
+
+    /*
+     * =============================================================
+     * IMAGE
+     * =============================================================
+     */
+
+    if (
+        item.type ===
+        'image'
+    ) {
+
+        button.setAttribute(
+            'aria-label',
+            `Öppna bild ${index + 1}`
+        );
+
+
+        /*
+         * Reserve the correct amount of space before
+         * the original image has downloaded.
+         */
+
+        if (
+            item.width &&
+            item.height
+        ) {
+
+            button.style.aspectRatio =
+                `${item.width} / ${item.height}`;
+
         }
-    });
 
-    // Show confirmation message
-    function showConfirmation(success, name, email, attending) {
-        const section = document.getElementById('rsvp');
-        
-        if (success) {
-            section.innerHTML = `
-                <div class="heading-group">
-                    <h2>Tack för ditt svar!</h2>
-                    <img src="images/divider.svg" alt="" class="divider">
-                </div>
-                <div class="confirmation-message">
-                    <p class="confirmation-icon">♥</p>
-                    <p><strong>${name}</strong>, vi har tagit emot din anmälan.</p>
-                    ${attending 
-                        ? `<p>Vi ser fram emot att fira tillsammans med dig!</p>`
-                        : `<p>Tack för att du meddelade oss. Vi hoppas vi ses en annan gång!</p>`
+
+        const image =
+            document.createElement(
+                'img'
+            );
+
+
+        image.src =
+            item.src;
+
+
+        image.alt =
+            item.alt || '';
+
+
+        image.loading =
+            'lazy';
+
+
+        image.decoding =
+            'async';
+
+
+        image.width =
+            item.width;
+
+
+        image.height =
+            item.height;
+
+
+        button.appendChild(
+            image
+        );
+
+    }
+
+
+
+    /*
+     * =============================================================
+     * VIDEO
+     * =============================================================
+     */
+
+    else if (
+        item.type ===
+        'video'
+    ) {
+
+        button.classList.add(
+            'video-card'
+        );
+
+
+        button.setAttribute(
+            'aria-label',
+            `Spela video ${index + 1}`
+        );
+
+
+        /*
+         * We intentionally don't load the video in the grid.
+         *
+         * The original videos may be large, so the real video is
+         * only requested once the visitor opens it.
+         */
+
+        const placeholder =
+            document.createElement(
+                'div'
+            );
+
+
+        placeholder.className =
+            'video-placeholder';
+
+
+
+        const playButton =
+            document.createElement(
+                'span'
+            );
+
+
+        playButton.className =
+            'video-play-button';
+
+
+        playButton.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+
+        playButton.textContent =
+            '▶';
+
+
+
+        const label =
+            document.createElement(
+                'span'
+            );
+
+
+        label.className =
+            'video-label';
+
+
+        label.textContent =
+            'Video';
+
+
+
+        placeholder.appendChild(
+            playButton
+        );
+
+
+        placeholder.appendChild(
+            label
+        );
+
+
+        button.appendChild(
+            placeholder
+        );
+
+    }
+
+
+
+    button.addEventListener(
+        'click',
+        () => {
+
+            openLightbox(
+                index
+            );
+
+        }
+    );
+
+
+    return button;
+
+}
+
+
+
+/* ================================================================
+   LOAD MORE WHILE SCROLLING
+   ================================================================ */
+
+let scrollTicking =
+    false;
+
+
+window.addEventListener(
+    'scroll',
+
+    () => {
+
+        if (
+            scrollTicking
+        ) {
+
+            return;
+
+        }
+
+
+        scrollTicking =
+            true;
+
+
+        window.requestAnimationFrame(
+            () => {
+
+                const distanceFromBottom =
+                    document.documentElement.scrollHeight
+                    -
+                    (
+                        window.scrollY +
+                        window.innerHeight
+                    );
+
+
+                /*
+                 * Start loading another batch before the visitor
+                 * actually reaches the bottom.
+                 */
+
+                if (
+                    distanceFromBottom <
+                    2000
+                ) {
+
+                    renderNextBatch();
+
+                }
+
+
+                scrollTicking =
+                    false;
+
+            }
+        );
+
+    },
+
+    {
+        passive: true
+    }
+);
+
+
+
+/* ================================================================
+   MAIN FILTER BUTTONS
+   ================================================================ */
+
+filterButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            'click',
+            () => {
+
+                activeFilter =
+                    button.dataset.filter;
+
+
+
+                filterButtons.forEach(
+                    otherButton => {
+
+                        const isActive =
+                            otherButton ===
+                            button;
+
+
+                        otherButton
+                            .classList
+                            .toggle(
+                                'active',
+                                isActive
+                            );
+
+
+                        otherButton
+                            .setAttribute(
+                                'aria-pressed',
+                                String(
+                                    isActive
+                                )
+                            );
+
                     }
-                    <p class="confirmation-details">En bekräftelse har skickats till dig och till oss.</p>
-                </div>
-            `;
-        } else {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Skicka';
-            
-            let errorDiv = rsvpForm.querySelector('.submit-error');
-            if (!errorDiv) {
-                errorDiv = document.createElement('div');
-                errorDiv.className = 'submit-error';
-                rsvpForm.insertBefore(errorDiv, submitBtn);
+                );
+
+
+
+                /*
+                 * Show photographer subcategories.
+                 */
+
+                if (
+                    activeFilter ===
+                    'photographer'
+                ) {
+
+                    photographerFilterWrapper
+                        .hidden =
+                        false;
+
+
+                    /*
+                     * Reset to Alla bilder every time
+                     * Fotografen is selected.
+                     */
+
+                    activePhotographerFilter =
+                        'all';
+
+
+                    photographerFilterButtons
+                        .forEach(
+                            photographerButton => {
+
+                                const isAll =
+                                    photographerButton
+                                        .dataset
+                                        .photographerFilter ===
+                                    'all';
+
+
+                                photographerButton
+                                    .classList
+                                    .toggle(
+                                        'active',
+                                        isAll
+                                    );
+
+
+                                photographerButton
+                                    .setAttribute(
+                                        'aria-pressed',
+                                        String(
+                                            isAll
+                                        )
+                                    );
+
+                            }
+                        );
+
+                }
+
+                else {
+
+                    photographerFilterWrapper
+                        .hidden =
+                        true;
+
+                }
+
+
+                renderGallery();
+
             }
-            errorDiv.innerHTML = `
-                <p>Något gick fel när anmälan skulle skickas.</p>
-                <p>Vänligen försök igen eller kontakta oss direkt på <a href="mailto:hannaoskarbrollop2026@gmail.com">hannaoskarbrollop2026@gmail.com</a></p>
-            `;
-        }
+        );
+
+    }
+);
+
+
+
+/* ================================================================
+   PHOTOGRAPHER SUBFILTERS
+   ================================================================ */
+
+photographerFilterButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            'click',
+            () => {
+
+                activePhotographerFilter =
+                    button
+                        .dataset
+                        .photographerFilter;
+
+
+
+                photographerFilterButtons
+                    .forEach(
+                        otherButton => {
+
+                            const isActive =
+                                otherButton ===
+                                button;
+
+
+                            otherButton
+                                .classList
+                                .toggle(
+                                    'active',
+                                    isActive
+                                );
+
+
+                            otherButton
+                                .setAttribute(
+                                    'aria-pressed',
+                                    String(
+                                        isActive
+                                    )
+                                );
+
+                        }
+                    );
+
+
+                renderGallery();
+
+            }
+        );
+
+    }
+);
+
+
+
+/* ================================================================
+   LIGHTBOX DOM
+   ================================================================ */
+
+const lightbox =
+    document.getElementById(
+        'lightbox'
+    );
+
+
+const lightboxImage =
+    document.getElementById(
+        'lightbox-image'
+    );
+
+
+const lightboxVideo =
+    document.getElementById(
+        'lightbox-video'
+    );
+
+
+const lightboxClose =
+    document.getElementById(
+        'lightbox-close'
+    );
+
+
+const lightboxPrevious =
+    document.getElementById(
+        'lightbox-previous'
+    );
+
+
+const lightboxNext =
+    document.getElementById(
+        'lightbox-next'
+    );
+
+
+const lightboxCounter =
+    document.getElementById(
+        'lightbox-counter'
+    );
+
+
+let currentMediaIndex =
+    0;
+
+
+
+/* ================================================================
+   OPEN LIGHTBOX
+   ================================================================ */
+
+function openLightbox(index) {
+
+    if (
+        visibleMedia.length === 0
+    ) {
+
+        return;
+
     }
 
-    // Show already submitted message
-    function showAlreadySubmitted(email) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Skicka';
-        
-        let errorDiv = rsvpForm.querySelector('.submit-error');
-        if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.className = 'submit-error';
-            rsvpForm.insertBefore(errorDiv, submitBtn);
-        }
-        errorDiv.innerHTML = `
-            <p>E-postadressen <strong>${email}</strong> har redan skickat in en anmälan.</p>
-            <p>Om du behöver ändra din anmälan, vänligen kontakta oss på <a href="mailto:hannaoskarbrollop2026@gmail.com">hannaoskarbrollop2026@gmail.com</a></p>
-        `;
-    }
 
-    // Run initial validation
-    validateForm();
+    currentMediaIndex =
+        index;
+
+
+    updateLightboxMedia();
+
+
+    lightbox
+        .classList
+        .add(
+            'active'
+        );
+
+
+    lightbox
+        .setAttribute(
+            'aria-hidden',
+            'false'
+        );
+
+
+    document.body
+        .classList
+        .add(
+            'lightbox-open'
+        );
+
 }
 
-// Lightbox functionality for map images
-const lightbox = document.getElementById('lightbox');
 
-if (lightbox) {
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxClose = document.querySelector('.lightbox-close');
-    const mapImages = document.querySelectorAll('.map-figure img');
 
-    // Open lightbox when clicking a map image
-    mapImages.forEach(img => {
-        img.addEventListener('click', () => {
-            lightboxImg.src = img.src;
-            lightboxImg.alt = img.alt;
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-    });
+/* ================================================================
+   CLOSE LIGHTBOX
+   ================================================================ */
 
-    // Close lightbox when clicking the X
-    lightboxClose.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeLightbox();
-    });
+function closeLightbox() {
 
-    // Close lightbox when clicking outside the image
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            closeLightbox();
-        }
-    });
+    stopVideo();
 
-    // Close lightbox with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            closeLightbox();
-        }
-    });
 
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-    }
+    lightboxImage.removeAttribute(
+        'src'
+    );
+
+
+    lightbox
+        .classList
+        .remove(
+            'active'
+        );
+
+
+    lightbox
+        .setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+
+    document.body
+        .classList
+        .remove(
+            'lightbox-open'
+        );
+
 }
+
+
+
+/* ================================================================
+   STOP VIDEO
+   ================================================================ */
+
+function stopVideo() {
+
+    lightboxVideo.pause();
+
+
+    lightboxVideo.removeAttribute(
+        'src'
+    );
+
+
+    lightboxVideo.load();
+
+}
+
+
+
+/* ================================================================
+   UPDATE LIGHTBOX
+   ================================================================ */
+
+function updateLightboxMedia() {
+
+    stopVideo();
+
+
+    const item =
+        visibleMedia[
+        currentMediaIndex
+        ];
+
+
+
+    /*
+     * IMAGE
+     */
+
+    if (
+        item.type ===
+        'image'
+    ) {
+
+        lightboxVideo.hidden =
+            true;
+
+
+        lightboxImage.hidden =
+            false;
+
+
+        lightboxImage.src =
+            item.src;
+
+
+        lightboxImage.alt =
+            item.alt || '';
+
+    }
+
+
+
+    /*
+     * VIDEO
+     */
+
+    else if (
+        item.type ===
+        'video'
+    ) {
+
+        lightboxImage.hidden =
+            true;
+
+
+        lightboxImage.removeAttribute(
+            'src'
+        );
+
+
+        lightboxVideo.hidden =
+            false;
+
+
+        lightboxVideo.src =
+            item.src;
+
+
+        lightboxVideo.load();
+
+    }
+
+
+
+    lightboxCounter.textContent =
+        `${currentMediaIndex + 1} / ${visibleMedia.length}`;
+
+}
+
+
+
+/* ================================================================
+   PREVIOUS
+   ================================================================ */
+
+function showPreviousMedia() {
+
+    currentMediaIndex--;
+
+
+    if (
+        currentMediaIndex < 0
+    ) {
+
+        currentMediaIndex =
+            visibleMedia.length - 1;
+
+    }
+
+
+    updateLightboxMedia();
+
+}
+
+
+
+/* ================================================================
+   NEXT
+   ================================================================ */
+
+function showNextMedia() {
+
+    currentMediaIndex++;
+
+
+    if (
+        currentMediaIndex >=
+        visibleMedia.length
+    ) {
+
+        currentMediaIndex =
+            0;
+
+    }
+
+
+    updateLightboxMedia();
+
+}
+
+
+
+/* ================================================================
+   LIGHTBOX BUTTONS
+   ================================================================ */
+
+lightboxClose.addEventListener(
+    'click',
+    closeLightbox
+);
+
+
+lightboxPrevious.addEventListener(
+    'click',
+    showPreviousMedia
+);
+
+
+lightboxNext.addEventListener(
+    'click',
+    showNextMedia
+);
+
+
+
+/* ================================================================
+   KEYBOARD CONTROLS
+   ================================================================ */
+
+document.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            !lightbox
+                .classList
+                .contains(
+                    'active'
+                )
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            event.key ===
+            'Escape'
+        ) {
+
+            closeLightbox();
+
+        }
+
+
+        if (
+            event.key ===
+            'ArrowLeft'
+        ) {
+
+            showPreviousMedia();
+
+        }
+
+
+        if (
+            event.key ===
+            'ArrowRight'
+        ) {
+
+            showNextMedia();
+
+        }
+
+    }
+);
+
+
+
+/* ================================================================
+   MOBILE SWIPE
+   ================================================================ */
+
+let touchStartX =
+    0;
+
+
+let touchEndX =
+    0;
+
+
+
+lightbox.addEventListener(
+    'touchstart',
+
+    event => {
+
+        /*
+         * Don't interfere with native video controls.
+         */
+
+        if (
+            event.target ===
+            lightboxVideo
+        ) {
+
+            return;
+
+        }
+
+
+        touchStartX =
+            event
+                .changedTouches[0]
+                .screenX;
+
+    },
+
+    {
+        passive: true
+    }
+);
+
+
+
+lightbox.addEventListener(
+    'touchend',
+
+    event => {
+
+        if (
+            event.target ===
+            lightboxVideo
+        ) {
+
+            return;
+
+        }
+
+
+        touchEndX =
+            event
+                .changedTouches[0]
+                .screenX;
+
+
+        const distance =
+            touchEndX -
+            touchStartX;
+
+
+        if (
+            Math.abs(
+                distance
+            ) < 50
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            distance > 0
+        ) {
+
+            showPreviousMedia();
+
+        }
+
+        else {
+
+            showNextMedia();
+
+        }
+
+    },
+
+    {
+        passive: true
+    }
+);
+
+
+
+/* ================================================================
+   INITIAL LOAD
+   ================================================================ */
+
+loadMedia();

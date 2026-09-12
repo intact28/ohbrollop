@@ -1,121 +1,308 @@
 <!DOCTYPE html>
 <html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hanna & Oskar | Bröllop</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <nav>
-        <h1>Hanna & Oskar</h1>
-        <p class="nav-date">25 Juli 2026</p>
-        <div class="nav-divider"></div>
-        <ul>
-            <li><a href="index.html" class="active">Hem</a></li>
-            <li><a href="important.html">Viktig Information</a></li>
-            <li><a href="rsvp.html">Anmälan</a></li>
-            <li><a href="accomodation.html">Boendet</a></li>         
-            <li><a href="schedule.html">Schema</a></li>
-            <li><a href="location.html">Platsen</a></li>
-            <li><a href="travel.html">Resa</a></li>
-            <li><a href="map.html">Karta</a></li>
-            <li><a href="contact.html">Kontakta Oss</a></li>
-        </ul>
-        <div class="nav-footer">
-            <div class="nav-footer-divider"></div>
-            <p class="nav-monogram">H & O</p>
-            <div class="nav-footer-divider"></div>
-            <p class="nav-hearts">♥ ♥ ♥</p>
-        </div>
-    </nav>
+    <head>
+        <meta charset="UTF-8">
 
-    <main>
-        <img src="images/hanna_oskar.jpg" alt="Hanna och Oskar" class="portrait">
-        <section id="home" class="page active">
-            <div class="heading-group">
-                <h1>Vi gifter oss!</h1>
-                <img src="images/divider.svg" alt="" class="divider">
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+        <title>Hanna & Oskar | Bröllopsbilder</title>
+
+        <link
+            rel="stylesheet"
+            href="styles.css">
+
+        <script
+            src="script.js"
+            defer></script>
+    </head>
+
+    <body>
+
+        <!-- ============================================================
+         HERO
+         ============================================================ -->
+
+        <section
+            class="hero"
+            id="top">
+
+            <div class="hero-shade"></div>
+
+            <div class="hero-content">
+
+                <p class="hero-date">
+                    25 juli 2026
+                </p>
+
+                <h1>
+                    Hanna & Oskar
+                </h1>
+
+                <p class="hero-text">
+                    Tack för att ni firade vår dag tillsammans med oss
+                </p>
+
             </div>
-            <p>Vi skulle bli väldigt glada om ni är en del av vår speciella dag</p>
-            <br>
-            <p><strong>Datum:</strong> 25 / 7 / 2026</p>
-            <p><strong>Plats:</strong> Ekerum Resort Öland</p>
-            
-            <div class="countdown">
-                <div class="countdown-item">
-                    <span id="days">0</span>
-                    <label>Dagar</label>
-                </div>
-                <div class="countdown-item">
-                    <span id="hours">0</span>
-                    <label>Timmar</label>
-                </div>
-                <div class="countdown-item">
-                    <span id="minutes">0</span>
-                    <label>Minuter</label>
-                </div>
-                <div class="countdown-item">
-                    <span id="seconds">0</span>
-                    <label>Sekunder</label>
-                </div>
-            </div>
-            <div class="journey">
-                <div class="journey-item">
-                    <a href="https://www.google.com/maps/search/?api=1&query=37.36092196970829,-122.12701423230179" target="_blank" class="map-circle">
-                        <iframe
-                            class="map-desktop" 
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d700000!2d-122.12701423230179!3d37.36092196970829!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sse"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                        <iframe 
-                            class="map-mobile"
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1500000!2d-122.12701423230179!3d37.36092196970829!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sse"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                        <span class="heart-marker">♥</span>
-                    </a>
-                    <p class="journey-label">Hello</p>
-                </div>
-                <div class="journey-item">
-                    <a href="https://www.google.com/maps/search/?api=1&query=25.715747373193036,-80.14975641416936" target="_blank" class="map-circle">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d300000!2d-80.14975641416936!3d25.715747373193036!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sse"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                        <span class="heart-marker">♥</span>
-                    </a>
-                    <p class="journey-label">Will You?</p>
-                </div>
-                <div class="journey-item">
-                    <a href="https://www.google.com/maps/search/?api=1&query=56.78717679871525,16.556436433484325" target="_blank" class="map-circle">
-                        <iframe 
-                            class="map-desktop"
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d400000!2d16.556436433484325!3d56.78717679871525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sse"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                        <iframe 
-                            class="map-mobile"
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d450000!2d16.556436433484325!3d56.78717679871525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sse"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                        <span class="heart-marker">♥</span>
-                    </a>
-                    <p class="journey-label">I Do</p>
-                </div>
-            </div>
+
+            <a
+                href="#gallery"
+                class="scroll-cue"
+                aria-label="Visa bilderna">
+
+                <span>
+                    Se bilderna
+                </span>
+
+                <span
+                    class="scroll-arrow"
+                    aria-hidden="true">
+                    ↓
+                </span>
+
+            </a>
+
         </section>
-    </main>
-</body>
+
+        <!-- ============================================================
+         GALLERY
+         ============================================================ -->
+
+        <main
+            class="gallery-section"
+            id="gallery">
+
+            <header class="gallery-header">
+
+                <p class="gallery-eyebrow">
+                    25 · 07 · 2026
+                </p>
+
+                <h2>
+                    Vår bröllopsdag
+                </h2>
+
+                <p class="gallery-intro">
+                    Här har vi samlat bilder och filmer från vår dag.
+                    Välj ett album eller se allt tillsammans.
+                </p>
+
+            </header>
+
+            <!-- ========================================================
+             MAIN FILTERS
+             ======================================================== -->
+
+            <div class="filter-wrapper">
+
+                <div
+                    class="filters"
+                    role="group"
+                    aria-label="Välj album">
+
+                    <button
+                        class="filter-button active"
+                        type="button"
+                        data-filter="all"
+                        aria-pressed="true">
+                        Alla bilder
+                    </button>
+
+                    <button
+                        class="filter-button"
+                        type="button"
+                        data-filter="photographer"
+                        aria-pressed="false">
+                        Fotografen
+                    </button>
+
+                    <button
+                        class="filter-button"
+                        type="button"
+                        data-filter="guests"
+                        aria-pressed="false">
+                        Gästbilder
+                    </button>
+
+                    <button
+                        class="filter-button"
+                        type="button"
+                        data-filter="photobooth"
+                        aria-pressed="false">
+                        Photo Booth
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- ========================================================
+             PHOTOGRAPHER SUBFILTERS
+             ======================================================== -->
+
+            <div
+                class="photographer-filter-wrapper"
+                id="photographer-filter-wrapper"
+                hidden>
+
+                <div
+                    class="photographer-filters"
+                    role="group"
+                    aria-label="Välj fotografkategori">
+
+                    <button
+                        class="photographer-filter-button active"
+                        type="button"
+                        data-photographer-filter="all"
+                        aria-pressed="true">
+                        Alla bilder
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="forberedelser"
+                        aria-pressed="false">
+                        Förberedelser
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="vigsel"
+                        aria-pressed="false">
+                        Vigsel
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="brudfolje"
+                        aria-pressed="false">
+                        Brudfölje / vänner
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="portratt"
+                        aria-pressed="false">
+                        Porträtt
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="mingel"
+                        aria-pressed="false">
+                        Mingel
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="gruppbild-familj"
+                        aria-pressed="false">
+                        Gruppbild &amp; Familj
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="middag"
+                        aria-pressed="false">
+                        Middag
+                    </button>
+
+                    <button
+                        class="photographer-filter-button"
+                        type="button"
+                        data-photographer-filter="golden-hour"
+                        aria-pressed="false">
+                        Golden Hour
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- ========================================================
+             MEDIA GRID
+             ======================================================== -->
+
+            <div
+                class="photo-grid"
+                id="photo-grid"></div>
+
+            <p
+                class="empty-gallery"
+                id="empty-gallery"
+                hidden>
+                Inga bilder eller filmer finns i det här albumet ännu.
+            </p>
+
+        </main>
+
+        <!-- ============================================================
+         LIGHTBOX
+         ============================================================ -->
+
+        <div
+            class="lightbox"
+            id="lightbox"
+            aria-hidden="true">
+
+            <button
+                class="lightbox-close"
+                id="lightbox-close"
+                type="button"
+                aria-label="Stäng">
+                ×
+            </button>
+
+            <button
+                class="lightbox-navigation lightbox-previous"
+                id="lightbox-previous"
+                type="button"
+                aria-label="Föregående">
+                ‹
+            </button>
+
+            <div class="lightbox-media-wrapper">
+
+                <!-- Image -->
+                <img
+                    class="lightbox-image"
+                    id="lightbox-image"
+                    src
+                    alt
+                    hidden>
+
+                <!-- Video -->
+                <video
+                    class="lightbox-video"
+                    id="lightbox-video"
+                    controls
+                    playsinline
+                    preload="metadata"
+                    hidden></video>
+
+            </div>
+
+            <button
+                class="lightbox-navigation lightbox-next"
+                id="lightbox-next"
+                type="button"
+                aria-label="Nästa">
+                ›
+            </button>
+
+            <div
+                class="lightbox-counter"
+                id="lightbox-counter"></div>
+
+        </div>
+
+    </body>
 </html>
