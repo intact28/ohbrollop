@@ -15,7 +15,7 @@ let activePhotographerFilter = 'all';
  * Because we are serving the original full-resolution files,
  * don't put every image into the DOM at once.
  */
-const ITEMS_PER_BATCH = 40;
+const ITEMS_PER_BATCH = 24;
 
 let renderedCount = 0;
 
@@ -443,10 +443,7 @@ function createMediaCard(
      * =============================================================
      */
 
-    if (
-        item.type ===
-        'image'
-    ) {
+    if (item.type === 'image') {
 
         button.setAttribute(
             'aria-label',
@@ -454,30 +451,21 @@ function createMediaCard(
         );
 
 
-        /*
-         * Reserve the correct amount of space before
-         * the original image has downloaded.
-         */
-
         if (
             item.width &&
             item.height
         ) {
-
             button.style.aspectRatio =
                 `${item.width} / ${item.height}`;
-
         }
 
 
         const image =
-            document.createElement(
-                'img'
-            );
+            document.createElement('img');
 
 
         image.src =
-            item.src;
+            item.thumb || item.src;
 
 
         image.alt =
@@ -500,10 +488,7 @@ function createMediaCard(
             item.height;
 
 
-        button.appendChild(
-            image
-        );
-
+        button.appendChild(image);
     }
 
 
@@ -514,10 +499,7 @@ function createMediaCard(
      * =============================================================
      */
 
-    else if (
-        item.type ===
-        'video'
-    ) {
+    else if (item.type === 'video') {
 
         button.classList.add(
             'video-card'
@@ -530,28 +512,58 @@ function createMediaCard(
         );
 
 
-        /*
-         * We intentionally don't load the video in the grid.
-         *
-         * The original videos may be large, so the real video is
-         * only requested once the visitor opens it.
-         */
-
-        const placeholder =
-            document.createElement(
-                'div'
-            );
+        if (
+            item.width &&
+            item.height
+        ) {
+            button.style.aspectRatio =
+                `${item.width} / ${item.height}`;
+        }
 
 
-        placeholder.className =
-            'video-placeholder';
+        const poster =
+            document.createElement('img');
 
+
+        poster.src =
+            item.thumb || item.poster;
+
+
+        poster.alt =
+            'Videoförhandsvisning';
+
+
+        poster.loading =
+            'lazy';
+
+
+        poster.decoding =
+            'async';
+
+
+        poster.width =
+            item.width;
+
+
+        poster.height =
+            item.height;
+
+
+        button.appendChild(
+            poster
+        );
+
+
+        const overlay =
+            document.createElement('span');
+
+
+        overlay.className =
+            'video-play-overlay';
 
 
         const playButton =
-            document.createElement(
-                'span'
-            );
+            document.createElement('span');
 
 
         playButton.className =
@@ -568,36 +580,14 @@ function createMediaCard(
             '▶';
 
 
-
-        const label =
-            document.createElement(
-                'span'
-            );
-
-
-        label.className =
-            'video-label';
-
-
-        label.textContent =
-            'Video';
-
-
-
-        placeholder.appendChild(
+        overlay.appendChild(
             playButton
         );
 
 
-        placeholder.appendChild(
-            label
-        );
-
-
         button.appendChild(
-            placeholder
+            overlay
         );
-
     }
 
 
@@ -1035,14 +1025,7 @@ function updateLightboxMedia() {
 
 
 
-    /*
-     * IMAGE
-     */
-
-    if (
-        item.type ===
-        'image'
-    ) {
+    if (item.type === 'image') {
 
         lightboxVideo.hidden =
             true;
@@ -1058,19 +1041,11 @@ function updateLightboxMedia() {
 
         lightboxImage.alt =
             item.alt || '';
-
     }
 
 
 
-    /*
-     * VIDEO
-     */
-
-    else if (
-        item.type ===
-        'video'
-    ) {
+    else if (item.type === 'video') {
 
         lightboxImage.hidden =
             true;
@@ -1085,12 +1060,15 @@ function updateLightboxMedia() {
             false;
 
 
+        lightboxVideo.poster =
+            item.poster || item.thumb || '';
+
+
         lightboxVideo.src =
             item.src;
 
 
         lightboxVideo.load();
-
     }
 
 
