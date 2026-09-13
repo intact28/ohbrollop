@@ -899,6 +899,11 @@ const lightboxCounter =
         'lightbox-counter'
     );
 
+const lightboxDownload =
+    document.getElementById(
+        'lightbox-download'
+    );
+
 
 let currentMediaIndex =
     0;
@@ -959,7 +964,12 @@ function closeLightbox() {
 
     stopVideo();
 
+    lightboxDownload.hidden =
+        true;
 
+    lightboxDownload.removeAttribute(
+        'href'
+    );
     lightboxImage.removeAttribute(
         'src'
     );
@@ -1041,12 +1051,43 @@ function updateLightboxMedia() {
 
         lightboxImage.alt =
             item.alt || '';
+
+        if (item.original) {
+
+            lightboxDownload.hidden =
+                false;
+
+
+            lightboxDownload.href =
+                item.original;
+
+
+            /*
+             * This is also useful as a filename hint.
+             *
+             * GitHub's release asset response itself normally
+             * handles the actual download.
+             */
+            lightboxDownload.setAttribute(
+                'download',
+                item.name || ''
+            );
+
+        }
+        else {
+
+            lightboxDownload.hidden =
+                true;
+
+        }
     }
 
 
 
     else if (item.type === 'video') {
 
+        lightboxDownload.hidden =
+            true;
         lightboxImage.hidden =
             true;
 
