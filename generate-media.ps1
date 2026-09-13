@@ -7,6 +7,26 @@
 #   - video poster images
 #   - media.json
 #
+# Sources:
+#   photographer\...  -> photographer
+#   guests\photos     -> guests
+#   guests\videos     -> guests
+#   camera            -> guests (photos + videos)
+#   photobooth        -> photobooth
+#
+# GitHub releases:
+#
+#   Guest originals/videos/posters:
+#       photos-guests
+#
+#   Guest thumbnails:
+#       thumbs-guests
+#
+#   Guest display images:
+#       web-guests
+#
+# Camera media uses those SAME guest releases.
+#
 # Originals are NEVER modified.
 # ================================================================
 
@@ -44,14 +64,38 @@ $webMaxSize = 2560
 $webQuality = 85
 
 
-# Upload batch size
+# Number of assets uploaded to GitHub per gh command
+
 $uploadBatchSize = 25
 
 
 # ================================================================
-# SOURCE CONFIGURATION
+# SUPPORTED FILE TYPES
+# ================================================================
+
+$imageExtensions = @(
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".avif"
+)
+
+$videoExtensions = @(
+    ".mp4",
+    ".mov",
+    ".m4v",
+    ".webm"
+)
+
+
+# ================================================================
+# PHOTO SOURCES
 #
-# Order here is also the natural gallery order.
+# This order becomes the natural media.json order.
+#
+# Camera is intentionally Album = guests and uses the SAME
+# releases as guests.
 # ================================================================
 
 $sources = @(
@@ -165,6 +209,18 @@ $sources = @(
     },
 
     @{
+        Key = "camera"
+        Path = Join-Path $originalRoot "camera"
+
+        OriginalRelease = "photos-guests"
+        ThumbRelease = "thumbs-guests"
+        WebRelease = "web-guests"
+
+        Album = "guests"
+        Category = $null
+    },
+
+    @{
         Key = "photobooth"
         Path = Join-Path $originalRoot "photobooth"
 
@@ -178,40 +234,51 @@ $sources = @(
 )
 
 
-$videoFolder =
-    Join-Path `
-        $originalRoot `
-        "guests\videos"
+# ================================================================
+# VIDEO SOURCES
+#
+# Both guest videos and camera videos belong to Gästbilder.
+# ================================================================
+
+$videoSources = @(
+
+    @{
+        Key = "guests"
+
+        Path =
+            Join-Path `
+                $originalRoot `
+                "guests\videos"
+
+        Release = "photos-guests"
+
+        Album = "guests"
+    },
+
+    @{
+        Key = "camera"
+
+        Path =
+            Join-Path `
+                $originalRoot `
+                "camera"
+
+        Release = "photos-guests"
+
+        Album = "guests"
+    }
+
+)
 
 
-$posterFolder =
+$posterRoot =
     Join-Path `
         $generatedRoot `
         "video-posters"
 
 
 # ================================================================
-# SUPPORTED FILE TYPES
-# ================================================================
-
-$imageExtensions = @(
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".webp",
-    ".avif"
-)
-
-$videoExtensions = @(
-    ".mp4",
-    ".mov",
-    ".m4v",
-    ".webm"
-)
-
-
-# ================================================================
-# CHECK REQUIRED PROGRAMS
+# CHECK REQUIRED TOOLS
 # ================================================================
 
 Write-Host ""
@@ -254,6 +321,76 @@ Write-Host "ffmpeg  : OK"
 
 
 # ================================================================
+# GITHUB ASSET FILENAME NORMALIZATION
+#
+# GitHub can normalize special characters when release assets
+# are uploaded.
+#
+# Example seen in this project:
+#
+#     photo(0).jpg
+#
+# becomes:
+#
+#     photo.0.jpg
+#
+# We therefore normalize names before:
+#   - comparing local files with release assets
+#   - constructing download URLs
+#   - checking collisions
+# ================================================================
+
+function ConvertTo-GitHubAssetName {
+
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Filename
+    )
+
+
+    $name =
+        $Filename
+
+
+    # GitHub normalized parentheses in our existing assets:
+    #
+    # photo(0).jpg
+    #
+    # became:
+    #
+    # photo.0.jpg
+    #
+    # IMPORTANT:
+    # Do NOT replace + signs.
+    # GitHub keeps filenames such as:
+    #
+    # 2026-07-25T211253+0200.jpg
+
+    $name =
+        $name -replace '\(', '.'
+
+
+    $name =
+        $name -replace '\)', '.'
+
+
+    # Collapse duplicate dots caused by:
+    #
+    # (0).jpg -> .0..jpg
+
+    $name =
+        $name -replace '\.{2,}', '.'
+
+
+    $name =
+        $name.Trim('.')
+
+
+    return $name
+}
+
+
+# ================================================================
 # URL HELPER
 # ================================================================
 
@@ -268,9 +405,14 @@ function Get-GitHubAssetUrl {
     )
 
 
+    $githubFilename =
+        ConvertTo-GitHubAssetName `
+            $Filename
+
+
     $encodedFilename =
         [System.Uri]::EscapeDataString(
-            $Filename
+            $githubFilename
         )
 
 
@@ -307,9 +449,6 @@ function Get-DerivedFilename {
 
 # ================================================================
 # GET DISPLAY-ORIENTED IMAGE DIMENSIONS
-#
-# -auto-orient means portrait JPEGs with EXIF rotation return the
-# dimensions the browser will actually display.
 # ================================================================
 
 function Get-ImageDimensions {
@@ -332,7 +471,9 @@ function Get-ImageDimensions {
 
 
         if ($LASTEXITCODE -ne 0) {
+
             throw "ImageMagick returned an error."
+
         }
 
 
@@ -345,7 +486,9 @@ function Get-ImageDimensions {
 
 
         if ($parts.Count -ne 2) {
+
             throw "Unexpected dimension result: $text"
+
         }
 
 
@@ -358,18 +501,20 @@ function Get-ImageDimensions {
         }
 
     }
+
     catch {
 
         Write-Warning `
             "Could not read dimensions: $Path"
 
         return $null
+
     }
 }
 
 
 # ================================================================
-# GENERATE JPEG
+# GENERATE OPTIMIZED JPEG
 # ================================================================
 
 function Convert-ToGalleryJpeg {
@@ -415,7 +560,6 @@ function Convert-ToGalleryJpeg {
         "-resize",
         $resizeGeometry,
 
-        # If an image has transparency, flatten it onto white.
         "-background",
         "white",
 
@@ -425,11 +569,8 @@ function Convert-ToGalleryJpeg {
         "-alpha",
         "off",
 
-        # Remove EXIF/GPS metadata from WEB COPIES only.
-        # Originals remain untouched.
         "-strip",
 
-        # Progressive JPEG loading.
         "-interlace",
         "Plane",
 
@@ -472,11 +613,9 @@ function Ensure-Release {
     )
 
 
-    # ------------------------------------------------------------
-    # gh returns an error when the release does not exist.
-    # That is expected here, so temporarily prevent PowerShell
-    # from terminating on native stderr output.
-    # ------------------------------------------------------------
+    # A missing release is expected when running against a new tag.
+    # Temporarily prevent that expected gh error from terminating
+    # the entire script.
 
     $previousErrorActionPreference =
         $ErrorActionPreference
@@ -502,23 +641,15 @@ function Ensure-Release {
         $previousErrorActionPreference
 
 
-    # ------------------------------------------------------------
-    # Release already exists
-    # ------------------------------------------------------------
-
     if ($releaseExists) {
 
-        Write-Host "Release exists: $Tag"
-
         return
+
     }
 
 
-    # ------------------------------------------------------------
-    # Release does not exist - create it
-    # ------------------------------------------------------------
-
-    Write-Host "Creating GitHub release: $Tag"
+    Write-Host `
+        "Creating GitHub release: $Tag"
 
 
     & gh `
@@ -532,17 +663,19 @@ function Ensure-Release {
 
     if ($LASTEXITCODE -ne 0) {
 
-        throw "Could not create GitHub release: $Tag"
+        throw `
+            "Could not create GitHub release: $Tag"
 
     }
 
 
-    Write-Host "Created: $Tag"
+    Write-Host `
+        "Created: $Tag"
 }
 
 
 # ================================================================
-# GET ASSET NAMES IN A RELEASE
+# GET EXISTING RELEASE ASSET NAMES
 # ================================================================
 
 function Get-ReleaseAssetNames {
@@ -562,7 +695,9 @@ function Get-ReleaseAssetNames {
 
     if (
         $LASTEXITCODE -ne 0 -or
-        [string]::IsNullOrWhiteSpace($releaseId)
+        [string]::IsNullOrWhiteSpace(
+            $releaseId
+        )
     ) {
 
         throw `
@@ -605,9 +740,11 @@ function Get-ReleaseAssetNames {
             )
         ) {
 
-            $lookup[
+            $normalizedName =
                 $name.Trim().ToLowerInvariant()
-            ] =
+
+
+            $lookup[$normalizedName] =
                 $true
 
         }
@@ -619,7 +756,17 @@ function Get-ReleaseAssetNames {
 
 
 # ================================================================
-# UPLOAD ONLY MISSING FILES
+# UPLOAD ONLY FILES THAT ARE NOT ALREADY ON GITHUB
+#
+# IMPORTANT:
+# Comparison uses the normalized GitHub asset name.
+#
+# Thus:
+#
+#     local:  photo(0).jpg
+#     remote: photo.0.jpg
+#
+# correctly counts as the SAME file.
 # ================================================================
 
 function Upload-MissingFiles {
@@ -631,6 +778,16 @@ function Upload-MissingFiles {
         [Parameter(Mandatory = $true)]
         [array]$Files
     )
+
+
+    if ($Files.Count -eq 0) {
+
+        Write-Host `
+            "$ReleaseTag : no files to process"
+
+        return
+
+    }
 
 
     Ensure-Release `
@@ -647,8 +804,13 @@ function Upload-MissingFiles {
             $Files |
             Where-Object {
 
+                $githubName =
+                    ConvertTo-GitHubAssetName `
+                        $_.Name
+
+
                 -not $existing.ContainsKey(
-                    $_.Name.ToLowerInvariant()
+                    $githubName.ToLowerInvariant()
                 )
 
             }
@@ -733,7 +895,7 @@ function Upload-MissingFiles {
 
 
 # ================================================================
-# PREPARE OUTPUT DIRECTORY
+# PREPARE OUTPUT DIRECTORIES
 # ================================================================
 
 New-Item `
@@ -741,6 +903,263 @@ New-Item `
     -Force `
     -Path $generatedRoot |
     Out-Null
+
+
+New-Item `
+    -ItemType Directory `
+    -Force `
+    -Path $posterRoot |
+    Out-Null
+
+
+# ================================================================
+# COMMON PATHS
+# ================================================================
+
+$guestPhotoFolder =
+    Join-Path `
+        $originalRoot `
+        "guests\photos"
+
+
+$guestVideoFolder =
+    Join-Path `
+        $originalRoot `
+        "guests\videos"
+
+
+$cameraFolder =
+    Join-Path `
+        $originalRoot `
+        "camera"
+
+
+# ================================================================
+# CHECK GUEST/CAMERA RELEASE FILENAME COLLISIONS
+#
+# Because guests + camera all use photos-guests, the GitHub asset
+# names must remain unique AFTER GitHub-style normalization.
+# ================================================================
+
+Write-Host ""
+Write-Host "======================================"
+Write-Host "CHECKING GUEST FILE NAMES"
+Write-Host "======================================"
+Write-Host ""
+
+
+$guestOriginalFilesForCheck =
+    @()
+
+
+foreach (
+    $folder in @(
+        $guestPhotoFolder,
+        $guestVideoFolder,
+        $cameraFolder
+    )
+) {
+
+    if (Test-Path $folder) {
+
+        $guestOriginalFilesForCheck +=
+            @(
+                Get-ChildItem `
+                    $folder `
+                    -File |
+                Where-Object {
+
+                    $extension =
+                        $_.Extension.ToLowerInvariant()
+
+
+                    (
+                        $imageExtensions -contains
+                        $extension
+                    ) -or (
+                        $videoExtensions -contains
+                        $extension
+                    )
+
+                }
+            )
+    }
+}
+
+
+# ------------------------------------------------
+# Check original names after GitHub normalization
+# ------------------------------------------------
+
+$normalizedOriginalNames =
+    @{}
+
+
+foreach ($file in $guestOriginalFilesForCheck) {
+
+    $githubName =
+        ConvertTo-GitHubAssetName `
+            $file.Name
+
+
+    $key =
+        $githubName.ToLowerInvariant()
+
+
+    if ($normalizedOriginalNames.ContainsKey($key)) {
+
+        throw @"
+
+Two guest/camera files would have the same GitHub release asset name:
+
+$($normalizedOriginalNames[$key])
+$($file.FullName)
+
+GitHub asset name:
+$githubName
+
+Rename one of the files and run the script again.
+"@
+
+    }
+
+
+    $normalizedOriginalNames[$key] =
+        $file.FullName
+}
+
+
+# ------------------------------------------------
+# Check derived thumbnail/web filenames
+#
+# Example:
+#
+# photo.jpg
+# photo.png
+#
+# both produce:
+#
+# photo.jpg
+# ------------------------------------------------
+
+$guestImageFilesForCheck =
+    @(
+        $guestOriginalFilesForCheck |
+        Where-Object {
+
+            $imageExtensions -contains
+            $_.Extension.ToLowerInvariant()
+
+        }
+    )
+
+
+$normalizedDerivedNames =
+    @{}
+
+
+foreach ($file in $guestImageFilesForCheck) {
+
+    $derivedName =
+        Get-DerivedFilename `
+            $file.Name
+
+
+    $githubDerivedName =
+        ConvertTo-GitHubAssetName `
+            $derivedName
+
+
+    $key =
+        $githubDerivedName.ToLowerInvariant()
+
+
+    if ($normalizedDerivedNames.ContainsKey($key)) {
+
+        throw @"
+
+Two guest/camera images would create the same GitHub thumbnail/display filename:
+
+$($normalizedDerivedNames[$key])
+$($file.FullName)
+
+Generated GitHub filename:
+$githubDerivedName
+
+Rename one of these files and run the script again.
+"@
+
+    }
+
+
+    $normalizedDerivedNames[$key] =
+        $file.FullName
+}
+
+
+Write-Host `
+    "Guest/camera filename check: OK"
+
+
+# ================================================================
+# UPLOAD CAMERA ORIGINALS
+#
+# Existing guest originals are already uploaded.
+#
+# Camera photos + videos are new, so upload them to:
+#
+#     photos-guests
+#
+# The comparison logic above means rerunning this safely skips
+# anything already uploaded.
+# ================================================================
+
+Write-Host ""
+Write-Host "======================================"
+Write-Host "UPLOADING CAMERA ORIGINALS"
+Write-Host "======================================"
+Write-Host ""
+
+
+if (-not (Test-Path $cameraFolder)) {
+
+    throw `
+        "Camera folder does not exist: $cameraFolder"
+
+}
+
+
+$cameraOriginalFiles =
+    @(
+        Get-ChildItem `
+            $cameraFolder `
+            -File |
+        Where-Object {
+
+            $extension =
+                $_.Extension.ToLowerInvariant()
+
+
+            (
+                $imageExtensions -contains
+                $extension
+            ) -or (
+                $videoExtensions -contains
+                $extension
+            )
+
+        } |
+        Sort-Object Name
+    )
+
+
+Write-Host `
+    "Camera originals: $($cameraOriginalFiles.Count)"
+
+
+Upload-MissingFiles `
+    -ReleaseTag "photos-guests" `
+    -Files $cameraOriginalFiles
 
 
 # ================================================================
@@ -797,7 +1216,7 @@ foreach ($source in $sources) {
 
 
     # ============================================================
-    # CHECK DERIVED FILENAMES FOR COLLISIONS
+    # CHECK DERIVED FILENAMES WITHIN THIS SOURCE
     # ============================================================
 
     $derivedNames =
@@ -811,20 +1230,26 @@ foreach ($source in $sources) {
                 $file.Name
 
 
+        $githubDerivedName =
+            ConvertTo-GitHubAssetName `
+                $derivedName
+
+
         $key =
-            $derivedName.ToLowerInvariant()
+            $githubDerivedName.ToLowerInvariant()
 
 
         if ($derivedNames.ContainsKey($key)) {
 
             throw @"
-Two files would create the same derived filename:
+
+Two files would create the same GitHub derived filename:
 
 $($derivedNames[$key])
-$file
+$($file.FullName)
 
-Derived name:
-$derivedName
+GitHub derived filename:
+$githubDerivedName
 "@
 
         }
@@ -914,7 +1339,7 @@ $derivedName
 
 
         # --------------------------------------------------------
-        # DISPLAY VERSION
+        # 2560PX DISPLAY VERSION
         # --------------------------------------------------------
 
         if (-not (Test-Path $webPath)) {
@@ -1041,7 +1466,7 @@ $derivedName
 
 
 # ================================================================
-# VIDEO POSTERS
+# PROCESS VIDEOS + CREATE POSTERS
 # ================================================================
 
 Write-Host ""
@@ -1050,206 +1475,226 @@ Write-Host "PROCESSING VIDEOS"
 Write-Host "======================================"
 
 
-New-Item `
-    -ItemType Directory `
-    -Force `
-    -Path $posterFolder |
-    Out-Null
+foreach ($videoSource in $videoSources) {
+
+    Write-Host ""
+    Write-Host "--------------------------------------"
+    Write-Host "Videos: $($videoSource.Key)"
+    Write-Host "--------------------------------------"
 
 
-$videos =
-    @(
-        Get-ChildItem `
-            $videoFolder `
-            -File |
-        Where-Object {
+    if (-not (Test-Path $videoSource.Path)) {
 
-            $videoExtensions -contains
-            $_.Extension.ToLowerInvariant()
+        Write-Warning `
+            "Video folder does not exist: $($videoSource.Path)"
 
-        } |
-        Sort-Object Name
-    )
+        continue
+
+    }
 
 
-Write-Host ""
-Write-Host "Videos found: $($videos.Count)"
-
-
-foreach ($video in $videos) {
-
-    $posterName =
-        [System.IO.Path]::GetFileNameWithoutExtension(
-            $video.Name
-        ) +
-        "-poster.jpg"
-
-
-    $posterPath =
+    $posterFolder =
         Join-Path `
-            $posterFolder `
-            $posterName
+            $posterRoot `
+            $videoSource.Key
 
 
-    # ============================================================
-    # CREATE POSTER
-    # ============================================================
-
-    if (-not (Test-Path $posterPath)) {
-
-        Write-Host `
-            "Generating poster: $posterName"
+    New-Item `
+        -ItemType Directory `
+        -Force `
+        -Path $posterFolder |
+        Out-Null
 
 
-        $temporaryPoster =
+    $videos =
+        @(
+            Get-ChildItem `
+                $videoSource.Path `
+                -File |
+            Where-Object {
+
+                $videoExtensions -contains
+                $_.Extension.ToLowerInvariant()
+
+            } |
+            Sort-Object Name
+        )
+
+
+    Write-Host `
+        "Videos found: $($videos.Count)"
+
+
+    foreach ($video in $videos) {
+
+        $posterName =
+            [System.IO.Path]::GetFileNameWithoutExtension(
+                $video.Name
+            ) +
+            "-poster.jpg"
+
+
+        $posterPath =
             Join-Path `
                 $posterFolder `
-                (
-                    [System.Guid]::NewGuid().ToString() +
-                    ".jpg"
-                )
+                $posterName
 
 
-        # Try one second into the video
+        # ========================================================
+        # CREATE POSTER
+        # ========================================================
 
-        & ffmpeg `
-            -hide_banner `
-            -loglevel error `
-            -y `
-            -ss 1 `
-            -i $video.FullName `
-            -frames:v 1 `
-            $temporaryPoster
+        if (-not (Test-Path $posterPath)) {
+
+            Write-Host `
+                "Generating poster: $posterName"
 
 
-        # Very short video: try first frame instead
+            $temporaryPoster =
+                Join-Path `
+                    $posterFolder `
+                    (
+                        [System.Guid]::NewGuid().ToString() +
+                        ".jpg"
+                    )
 
-        if (-not (Test-Path $temporaryPoster)) {
+
+            # First try one second into the video.
 
             & ffmpeg `
                 -hide_banner `
                 -loglevel error `
                 -y `
+                -ss 1 `
                 -i $video.FullName `
                 -frames:v 1 `
                 $temporaryPoster
 
+
+            # For very short videos, try the first frame.
+
+            if (-not (Test-Path $temporaryPoster)) {
+
+                & ffmpeg `
+                    -hide_banner `
+                    -loglevel error `
+                    -y `
+                    -i $video.FullName `
+                    -frames:v 1 `
+                    $temporaryPoster
+
+            }
+
+
+            if (-not (Test-Path $temporaryPoster)) {
+
+                throw `
+                    "Could not extract poster from $($video.Name)"
+
+            }
+
+
+            Convert-ToGalleryJpeg `
+                -Source $temporaryPoster `
+                -Destination $posterPath `
+                -MaxSize 1000 `
+                -Quality 82
+
+
+            Remove-Item `
+                $temporaryPoster `
+                -Force
         }
 
 
-        if (-not (Test-Path $temporaryPoster)) {
+        # ========================================================
+        # VIDEO ENTRY
+        # ========================================================
+
+        $posterDimensions =
+            Get-ImageDimensions `
+                $posterPath
+
+
+        if ($null -eq $posterDimensions) {
 
             throw `
-                "Could not extract poster from $($video.Name)"
+                "Could not determine poster dimensions: $posterPath"
 
         }
 
 
-        # Resize poster to max 1000px
-
-        Convert-ToGalleryJpeg `
-            -Source $temporaryPoster `
-            -Destination $posterPath `
-            -MaxSize 1000 `
-            -Quality 82
+        $posterUrl =
+            Get-GitHubAssetUrl `
+                $videoSource.Release `
+                $posterName
 
 
-        Remove-Item `
-            $temporaryPoster `
-            -Force
-    }
-
-
-    # ============================================================
-    # VIDEO ENTRY
-    # ============================================================
-
-    $posterDimensions =
-        Get-ImageDimensions `
-            $posterPath
-
-
-    if ($null -eq $posterDimensions) {
-
-        throw `
-            "Could not determine poster dimensions: $posterPath"
-
-    }
-
-
-    $posterUrl =
-        Get-GitHubAssetUrl `
-            "photos-guests" `
-            $posterName
-
-
-    $videoUrl =
-        Get-GitHubAssetUrl `
-            "photos-guests" `
-            $video.Name
-
-
-    $item =
-        [ordered]@{
-
-            type =
-                "video"
-
-            # Gallery preview
-            thumb =
-                $posterUrl
-
-            # Explicit poster field for <video>
-            poster =
-                $posterUrl
-
-            # Original video
-            src =
-                $videoUrl
-
-            original =
-                $videoUrl
-
-            album =
-                "guests"
-
-            alt =
-                ""
-
-            name =
+        $videoUrl =
+            Get-GitHubAssetUrl `
+                $videoSource.Release `
                 $video.Name
 
-            width =
-                $posterDimensions.Width
 
-            height =
-                $posterDimensions.Height
-        }
+        $item =
+            [ordered]@{
+
+                type =
+                    "video"
+
+                thumb =
+                    $posterUrl
+
+                poster =
+                    $posterUrl
+
+                src =
+                    $videoUrl
+
+                original =
+                    $videoUrl
+
+                album =
+                    $videoSource.Album
+
+                alt =
+                    ""
+
+                name =
+                    $video.Name
+
+                width =
+                    $posterDimensions.Width
+
+                height =
+                    $posterDimensions.Height
+            }
 
 
-    $media.Add(
-        [PSCustomObject]$item
-    )
+        $media.Add(
+            [PSCustomObject]$item
+        )
+    }
+
+
+    # ============================================================
+    # UPLOAD VIDEO POSTERS
+    # ============================================================
+
+    $posterFiles =
+        @(
+            Get-ChildItem `
+                $posterFolder `
+                -File `
+                -Filter "*-poster.jpg" |
+            Sort-Object Name
+        )
+
+
+    Upload-MissingFiles `
+        -ReleaseTag $videoSource.Release `
+        -Files $posterFiles
 }
-
-
-# ================================================================
-# UPLOAD MISSING VIDEO POSTERS
-# ================================================================
-
-$posterFiles =
-    @(
-        Get-ChildItem `
-            $posterFolder `
-            -File `
-            -Filter "*-poster.jpg" |
-        Sort-Object Name
-    )
-
-
-Upload-MissingFiles `
-    -ReleaseTag "photos-guests" `
-    -Files $posterFiles
 
 
 # ================================================================
